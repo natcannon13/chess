@@ -1,6 +1,7 @@
 package chess;
 
 import chess.movement.Bishop;
+import chess.movement.King;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -54,7 +55,7 @@ public class ChessPiece {
     public void initializeMovementRule(){
         switch (type){
             case KING:
-                break;
+                movementRule = new King();
             case QUEEN:
                 break;
             case BISHOP:

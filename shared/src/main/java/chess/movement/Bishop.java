@@ -32,6 +32,7 @@ public class Bishop extends ChessMovementRule {
                 case 3:
                     vertical = 1;
                     horizontal = -1;
+                    break;
             }
             MoveResultState nextMove = MoveResultState.FREE;
             int row = myPosition.getRow();
