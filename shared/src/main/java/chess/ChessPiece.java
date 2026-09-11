@@ -1,9 +1,6 @@
 package chess;
 
-import chess.movement.Bishop;
-import chess.movement.King;
-import chess.movement.Queen;
-import chess.movement.Rook;
+import chess.movement.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -69,7 +66,7 @@ public class ChessPiece {
                 movementRule = new Rook();
                 break;
             case KNIGHT:
-                break;
+                movementRule = new Knight();
             case PAWN:
                 break;
         }
