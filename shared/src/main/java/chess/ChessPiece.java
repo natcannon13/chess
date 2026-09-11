@@ -2,6 +2,7 @@ package chess;
 
 import chess.movement.Bishop;
 import chess.movement.King;
+import chess.movement.Rook;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -60,6 +61,8 @@ public class ChessPiece {
                 break;
             case BISHOP:
                 movementRule = new Bishop();
+            case ROOK:
+                movementRule = new Rook();
         }
     }
     /**
