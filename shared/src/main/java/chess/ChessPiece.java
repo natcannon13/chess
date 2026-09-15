@@ -67,7 +67,9 @@ public class ChessPiece {
                 break;
             case KNIGHT:
                 movementRule = new Knight();
+                break;
             case PAWN:
+                movementRule = new Pawn();
                 break;
         }
     }
