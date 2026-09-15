@@ -41,7 +41,54 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        throw new RuntimeException("Not implemented");
+        board = new ChessPiece[8][8];
+        for(int i = 0; i < 2; i++){
+            ChessGame.TeamColor color;
+            if (i == 0){
+                color = ChessGame.TeamColor.WHITE;
+            }
+            else{
+                color = ChessGame.TeamColor.BLACK;
+            }
+            for(int column = 1; column < 9; column++){
+                int backRow;
+                int frontRow;
+                ChessPiece.PieceType type;
+                if(i == 0){
+                    backRow = 1;
+                    frontRow = 2;
+                }
+                else{
+                    backRow = 8;
+                    frontRow = 7;
+                }
+                ChessPiece pawn = new ChessPiece(color, ChessPiece.PieceType.PAWN);
+                ChessPiece back = new ChessPiece(color, pieceByColumn(column));
+                ChessPosition frontPos = new ChessPosition(frontRow, column);
+                ChessPosition backPos = new ChessPosition(backRow, column);
+                addPiece(frontPos, pawn);
+                addPiece(backPos, back);
+            }
+        }
+    }
+
+    private ChessPiece.PieceType pieceByColumn(int column){
+        if(column == 1 || column == 8){
+            return ChessPiece.PieceType.ROOK;
+        }
+        if(column == 2 || column == 7){
+            return ChessPiece.PieceType.KNIGHT;
+        }
+        if(column == 3 || column == 6){
+            return ChessPiece.PieceType.BISHOP;
+        }
+        if(column == 4){
+            return ChessPiece.PieceType.QUEEN;
+        }
+        if(column == 5){
+            return ChessPiece.PieceType.KING;
+        }
+        throw new RuntimeException("Error finding piece type");
     }
 
     @Override
