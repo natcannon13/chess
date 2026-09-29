@@ -13,10 +13,13 @@ import java.util.Objects;
 public class ChessGame {
     private ChessBoard board;
     private TeamColor turn;
+    private ChessRulesEngine rules;
 
     public ChessGame() {
         board = new ChessBoard();
         board.resetBoard();
+        rules = new ChessRulesEngine();
+        turn = TeamColor.WHITE;
     }
 
     /**
@@ -98,7 +101,13 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        return false;
+        try {
+            return rules.isInCheck(teamColor, board);
+        }
+        catch(InvalidBoardStateException e){
+            System.out.println(e);
+            return false;
+        }
     }
 
     /**

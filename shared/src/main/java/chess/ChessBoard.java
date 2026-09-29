@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Objects;
 
 /**
@@ -49,6 +50,10 @@ public class ChessBoard {
      */
     public ChessPiece getPiece(ChessPosition position) {
         return board[position.getRow()-1][position.getColumn()-1];
+    }
+
+    public boolean hasPiece(ChessPosition position){
+        return (!(board[position.getRow()-1][position.getColumn()-1] == null));
     }
 
     public ChessGame.TeamColor getColor(ChessPosition position){
