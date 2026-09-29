@@ -1,5 +1,6 @@
 package chess;
 
+import java.awt.*;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -12,8 +13,10 @@ import java.util.Objects;
 public class ChessGame {
     private ChessBoard board;
     private TeamColor turn;
+
     public ChessGame() {
         board = new ChessBoard();
+        board.resetBoard();
     }
 
     /**
@@ -66,6 +69,10 @@ public class ChessGame {
             throw new InvalidMoveException("Invalid Move");
         }
         else {
+            TeamColor color = board.getColor(move.getStartPosition());
+            if(color != turn){
+                throw new InvalidMoveException("Out of Turn");
+            }
             board.movePiece(move);
             changeTurn();
             ChessPiece.PieceType promotion = move.getPromotionPiece();

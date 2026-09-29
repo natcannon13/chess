@@ -12,7 +12,6 @@ import java.util.Objects;
 public class ChessBoard {
     private ChessPiece[][] board = new ChessPiece[8][8];
     public ChessBoard() {
-        resetBoard();
     }
 
     /**
@@ -37,7 +36,7 @@ public class ChessBoard {
     }
 
     public void promotePiece(ChessPosition position, ChessPiece.PieceType promotion){
-        ChessGame.TeamColor color = getPiece(position).getTeamColor();
+        ChessGame.TeamColor color = getColor(position);
         removePiece(position);
         addPiece(position, new ChessPiece(color, promotion));
     }
@@ -52,6 +51,9 @@ public class ChessBoard {
         return board[position.getRow()-1][position.getColumn()-1];
     }
 
+    public ChessGame.TeamColor getColor(ChessPosition position){
+        return getPiece(position).getTeamColor();
+    }
     /**
      * Sets the board to the default starting board
      * (How the game of chess normally starts)
