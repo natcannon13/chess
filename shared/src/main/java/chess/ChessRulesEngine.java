@@ -1,5 +1,7 @@
 package chess;
 
+import java.util.Collection;
+
 public class ChessRulesEngine {
 
     public ChessRulesEngine(){
@@ -51,6 +53,24 @@ public class ChessRulesEngine {
             }
         }
         return false;
+    }
+
+    public boolean isInCheckmate(ChessGame.TeamColor color, ChessBoard board) throws InvalidBoardStateException {
+        if(!isInCheck(color, board)){
+            return false;
+        }
+        ChessPosition kingPosition = findKing(color, board);
+        ChessPiece king = board.getPiece(kingPosition);
+        Collection<ChessMove> moves = king.pieceMoves(board, kingPosition);
+        boolean kingCanMove = false;
+        for(ChessMove move: moves){
+            ChessBoard mockBoard = new ChessBoard(board);
+            mockBoard.movePiece(move);
+            if(!isInCheck(color, mockBoard)){
+                kingCanMove = true;
+            }
+        }
+        return !kingCanMove;
     }
 
 }

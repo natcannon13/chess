@@ -117,7 +117,13 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        return false;
+        try{
+            return rules.isInCheckmate(teamColor, board);
+        }
+        catch(InvalidBoardStateException e){
+            System.out.println(e);
+            return false;
+        }
     }
 
     /**
