@@ -12,7 +12,7 @@ import java.util.Objects;
 public class ChessBoard {
     private ChessPiece[][] board = new ChessPiece[8][8];
     public ChessBoard() {
-        
+        resetBoard();
     }
 
     /**
@@ -25,6 +25,16 @@ public class ChessBoard {
         board[position.getRow()-1][position.getColumn()-1] = piece;
     }
 
+    public void removePiece(ChessPosition position){
+        board[position.getRow()-1][position.getColumn()-1] = null;
+    }
+
+    public void movePiece(ChessMove move){
+        ChessPiece piece = getPiece(move.getStartPosition());
+        addPiece(move.getEndPosition(), piece);
+        //This should capture opposing piece as well
+        removePiece(move.getStartPosition());
+    }
     /**
      * Gets a chess piece on the chessboard
      *

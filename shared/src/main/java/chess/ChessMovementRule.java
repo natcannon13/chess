@@ -33,6 +33,8 @@ public class ChessMovementRule {
         return MoveResultState.FREE;
     }
 
+
+
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPiece piece, ChessPosition myPosition){
         return new ArrayList<ChessMove>();
     }
