@@ -67,6 +67,20 @@ public class ChessGame {
         }
         else {
             board.movePiece(move);
+            changeTurn();
+            ChessPiece.PieceType promotion = move.getPromotionPiece();
+            if(promotion != null){
+                board.promotePiece(move.getEndPosition(), promotion);
+            }
+        }
+    }
+
+    public void changeTurn(){
+        if(turn == TeamColor.BLACK){
+            turn = TeamColor.WHITE;
+        }
+        else if(turn == TeamColor.WHITE){
+            turn = TeamColor.BLACK;
         }
     }
 

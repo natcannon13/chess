@@ -35,6 +35,12 @@ public class ChessBoard {
         //This should capture opposing piece as well
         removePiece(move.getStartPosition());
     }
+
+    public void promotePiece(ChessPosition position, ChessPiece.PieceType promotion){
+        ChessGame.TeamColor color = getPiece(position).getTeamColor();
+        removePiece(position);
+        addPiece(position, new ChessPiece(color, promotion));
+    }
     /**
      * Gets a chess piece on the chessboard
      *
