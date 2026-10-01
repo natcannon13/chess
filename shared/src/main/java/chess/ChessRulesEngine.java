@@ -65,19 +65,34 @@ public class ChessRulesEngine {
         ChessPosition kingPosition = findKing(color, board);
         ChessPiece king = board.getPiece(kingPosition);
         Collection<ChessMove> moves = king.pieceMoves(board, kingPosition);
-        boolean kingCanMove = false;
-        for(ChessMove move: moves){
-            if(canMakeMoveInCheck(color, move, board)){
-                kingCanMove = true;
+        for(int i = 1; i < 9; i++){
+            for(int j = 1; j < 9; j++){
+                ChessPosition searchPosition = new ChessPosition(i, j);
+                ChessPiece pieceAtPosition = board.getPiece(searchPosition);
+                if(pieceAtPosition != null && pieceAtPosition.getTeamColor() == color) {
+                    moves.addAll(pieceAtPosition.pieceMoves(board, searchPosition));
+                }
             }
         }
-        return !kingCanMove;
+        boolean canEscape = false;
+        for(ChessMove move: moves){
+            if(canMakeMove(color, move, board)){
+                canEscape = true;
+            }
+        }
+        return !canEscape;
     }
 
-    public boolean canMakeMoveInCheck(ChessGame.TeamColor color, ChessMove move, ChessBoard board) throws InvalidBoardStateException {
-        ChessBoard mockBoard = new ChessBoard(board);
-        mockBoard.movePiece(move);
-        return !isInCheck(color, mockBoard);
+    public boolean canMakeMove(ChessGame.TeamColor color, ChessMove move, ChessBoard board){
+        try {
+            ChessBoard mockBoard = new ChessBoard(board);
+            mockBoard.movePiece(move);
+            return !isInCheck(color, mockBoard);
+        }
+        catch(InvalidBoardStateException e){
+            System.err.println(e);
+            return false;
+        }
     }
 
 }

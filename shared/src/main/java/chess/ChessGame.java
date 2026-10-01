@@ -1,6 +1,6 @@
 package chess;
 
-import java.awt.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -53,9 +53,16 @@ public class ChessGame {
      * @return Set of valid moves for requested piece, or null if no piece at
      * startPosition
      */
-    public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+    public Collection<ChessMove> validMoves(ChessPosition startPosition){
         if(board.getPiece(startPosition) != null) {
-            return board.getPiece(startPosition).pieceMoves(board, startPosition);
+            Collection<ChessMove> possibleMoves = board.getPiece(startPosition).pieceMoves(board, startPosition);
+            Collection<ChessMove> allValidMoves = new ArrayList<>();
+            for(ChessMove move: possibleMoves){
+                if(rules.canMakeMove(turn, move, board)){
+                    allValidMoves.add(move);
+                }
+            }
+            return allValidMoves;
         }
         else return null;
     }
@@ -76,13 +83,8 @@ public class ChessGame {
             if(color != turn){
                 throw new InvalidMoveException("Out of Turn");
             }
-            try {
-                if(!rules.canMakeMoveInCheck(color, move, board)){
-                    throw new InvalidMoveException("Move results in Check.");
-                }
-            }
-            catch(InvalidBoardStateException e){
-                System.err.println(e);
+            if(!rules.canMakeMove(color, move, board)){
+                throw new InvalidMoveException("Move results in Check.");
             }
             board.movePiece(move);
             changeTurn();
