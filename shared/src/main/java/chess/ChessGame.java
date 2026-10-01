@@ -76,6 +76,14 @@ public class ChessGame {
             if(color != turn){
                 throw new InvalidMoveException("Out of Turn");
             }
+            try {
+                if(!rules.canMakeMoveInCheck(color, move, board)){
+                    throw new InvalidMoveException("Move results in Check.");
+                }
+            }
+            catch(InvalidBoardStateException e){
+                System.err.println(e);
+            }
             board.movePiece(move);
             changeTurn();
             ChessPiece.PieceType promotion = move.getPromotionPiece();
@@ -105,7 +113,7 @@ public class ChessGame {
             return rules.isInCheck(teamColor, board);
         }
         catch(InvalidBoardStateException e){
-            System.out.println(e);
+            System.err.println(e);
             return false;
         }
     }

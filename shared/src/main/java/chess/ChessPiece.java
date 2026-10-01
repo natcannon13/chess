@@ -39,6 +39,12 @@ public class ChessPiece {
         initializeMovementRule();
     }
 
+    public ChessPiece(ChessPiece other){
+        this.pieceColor = other.pieceColor;
+        this.type = other.type;
+        initializeMovementRule();
+    }
+
     /**
      * The various different chess piece options
      */

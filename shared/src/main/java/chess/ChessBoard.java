@@ -16,7 +16,16 @@ public class ChessBoard {
     }
 
     public ChessBoard(ChessBoard other){
-        this.board = Arrays.copyOf(other.board, other.board.length);
+        for(int i = 0; i < 8; i++){
+            for(int j = 0; j < 8; j++){
+                if(other.board[i][j] == null){
+                    this.board[i][j] = null;
+                }
+                else{
+                    this.board[i][j] = new ChessPiece(other.board[i][j]);
+                }
+            }
+        }
     }
 
     /**

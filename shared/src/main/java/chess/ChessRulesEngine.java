@@ -10,6 +10,9 @@ public class ChessRulesEngine {
 
     public boolean isInCheck(ChessGame.TeamColor color, ChessBoard board) throws InvalidBoardStateException{
         ChessPosition kingPosition = findKing(color, board);
+        if(kingPosition == null){
+            throw new InvalidBoardStateException("No king found!");
+        }
         for(int i = 1; i < 9; i++){
             for(int j = 1; j < 9; j++){
                 ChessPosition searchPosition = new ChessPosition(i, j);
@@ -21,7 +24,7 @@ public class ChessRulesEngine {
         return false;
     }
 
-    private ChessPosition findKing(ChessGame.TeamColor color, ChessBoard board) throws InvalidBoardStateException{
+    private ChessPosition findKing(ChessGame.TeamColor color, ChessBoard board){
         for(int i = 1; i < 9; i++){
             for(int j = 1; j < 9; j++){
                 ChessPosition searchPosition = new ChessPosition(i, j);
@@ -33,7 +36,7 @@ public class ChessRulesEngine {
                 }
             }
         }
-        throw new InvalidBoardStateException("Error! No King found.");
+        return null;
     }
 
     public boolean checkHelper(ChessPosition piecePosition, ChessPosition kingPosition, ChessBoard board, ChessGame.TeamColor color){
@@ -64,13 +67,17 @@ public class ChessRulesEngine {
         Collection<ChessMove> moves = king.pieceMoves(board, kingPosition);
         boolean kingCanMove = false;
         for(ChessMove move: moves){
-            ChessBoard mockBoard = new ChessBoard(board);
-            mockBoard.movePiece(move);
-            if(!isInCheck(color, mockBoard)){
+            if(canMakeMoveInCheck(color, move, board)){
                 kingCanMove = true;
             }
         }
         return !kingCanMove;
+    }
+
+    public boolean canMakeMoveInCheck(ChessGame.TeamColor color, ChessMove move, ChessBoard board) throws InvalidBoardStateException {
+        ChessBoard mockBoard = new ChessBoard(board);
+        mockBoard.movePiece(move);
+        return !isInCheck(color, mockBoard);
     }
 
 }
