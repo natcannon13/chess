@@ -3,6 +3,7 @@ package chess.movement;
 import chess.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 public class Pawn extends ChessMovementRule {
@@ -23,15 +24,10 @@ public class Pawn extends ChessMovementRule {
             int row = myPosition.getRow();
             int col = myPosition.getColumn();
             boolean promote = false;
-            ArrayList<ChessPiece.PieceType> promotionTypes = new ArrayList<>();
             row += direction;
             col += i;
             if ((direction == 1 && row == 8) || (direction == -1) && row == 1) {
                 promote = true;
-                promotionTypes.add(ChessPiece.PieceType.BISHOP);
-                promotionTypes.add(ChessPiece.PieceType.KNIGHT);
-                promotionTypes.add(ChessPiece.PieceType.QUEEN);
-                promotionTypes.add(ChessPiece.PieceType.ROOK);
             }
             ChessPosition pos = new ChessPosition(row, col);
             MoveResultState nextMove = moveResult(board, piece, pos);
@@ -41,16 +37,12 @@ public class Pawn extends ChessMovementRule {
                         moves.add(new ChessMove(myPosition, pos, null));
                     }
                     else{
-                        for(ChessPiece.PieceType t : promotionTypes){
-                            moves.add(new ChessMove(myPosition, pos, t));
-                        }
+                        moves.addAll(getPromotions(myPosition, pos));
                     }
                     if ((direction == 1 && myPosition.getRow() == 2) || (direction == -1) && myPosition.getRow() == 7){
                         pos = new ChessPosition((row + direction), col);
                         nextMove = moveResult(board, piece, pos);
-                        if(nextMove == MoveResultState.FREE){
-                            moves.add(new ChessMove(myPosition, pos, null));
-                        }
+                        if(nextMove == MoveResultState.FREE) moves.add(new ChessMove(myPosition, pos, null));
                     }
                 }
             } else {
@@ -59,12 +51,23 @@ public class Pawn extends ChessMovementRule {
                         moves.add(new ChessMove(myPosition, pos, null));
                     }
                     else{
-                        for(ChessPiece.PieceType t : promotionTypes){
-                            moves.add(new ChessMove(myPosition, pos, t));
-                        }
+                        moves.addAll(getPromotions(myPosition, pos));
                     }
                 }
             }
+        }
+        return moves;
+    }
+
+    public Collection<ChessMove> getPromotions(ChessPosition start, ChessPosition end){
+        ArrayList<ChessMove> moves = new ArrayList<>();
+        ArrayList<ChessPiece.PieceType> promotionTypes = new ArrayList<>();
+        promotionTypes.add(ChessPiece.PieceType.BISHOP);
+        promotionTypes.add(ChessPiece.PieceType.KNIGHT);
+        promotionTypes.add(ChessPiece.PieceType.QUEEN);
+        promotionTypes.add(ChessPiece.PieceType.ROOK);
+        for(ChessPiece.PieceType t : promotionTypes){
+            moves.add(new ChessMove(start, end, t));
         }
         return moves;
     }
