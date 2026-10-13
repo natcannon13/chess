@@ -22,8 +22,7 @@ public class RadialMovementRule extends ChessMovementRule {
             MoveResultState nextMove = MoveResultState.FREE;
             int row = myPosition.getRow();
             int col = myPosition.getColumn();
-            if (!singleMove) {
-                while (nextMove == MoveResultState.FREE) {
+                do {
                     row += vertical;
                     col += horizontal;
                     ChessPosition pos = new ChessPosition(row, col);
@@ -31,17 +30,7 @@ public class RadialMovementRule extends ChessMovementRule {
                     if (nextMove == MoveResultState.FREE || nextMove == MoveResultState.CAPTURE) {
                         moves.add(new ChessMove(myPosition, pos, null));
                     }
-                }
-            }
-            else{
-                row += vertical;
-                col += horizontal;
-                ChessPosition pos = new ChessPosition(row, col);
-                nextMove = moveResult(board, piece, pos);
-                if (nextMove == MoveResultState.FREE || nextMove == MoveResultState.CAPTURE) {
-                    moves.add(new ChessMove(myPosition, pos, null));
-                }
-            }
+                } while (!singleMove && nextMove == MoveResultState.FREE);
         }
         return moves;
 

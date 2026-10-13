@@ -65,7 +65,9 @@ public class ChessGame {
             }
             return allValidMoves;
         }
-        else return null;
+        else {
+            return null;
+        }
     }
 
     /**

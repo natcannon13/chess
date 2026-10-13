@@ -10,14 +10,14 @@ public class King extends RadialMovementRule {
     int[][] directions;
     public King () {
         directions = new int[][]{
+                {-1, 0},
+                {-1, -1},
+                {0, -1},
+                {1, -1},
                 {1, 0},
                 {1, 1},
                 {0, 1},
                 {-1, 1},
-                {-1, 0},
-                {-1, -1},
-                {0, -1},
-                {1, -1}
         };
     }
 

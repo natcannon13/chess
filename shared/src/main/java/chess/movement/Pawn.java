@@ -32,19 +32,7 @@ public class Pawn extends ChessMovementRule {
             ChessPosition pos = new ChessPosition(row, col);
             MoveResultState nextMove = moveResult(board, piece, pos);
             if (i == 0) {
-                if (nextMove == MoveResultState.FREE) {
-                    if(!promote){
-                        moves.add(new ChessMove(myPosition, pos, null));
-                    }
-                    else{
-                        moves.addAll(getPromotions(myPosition, pos));
-                    }
-                    if ((direction == 1 && myPosition.getRow() == 2) || (direction == -1) && myPosition.getRow() == 7){
-                        pos = new ChessPosition((row + direction), col);
-                        nextMove = moveResult(board, piece, pos);
-                        if(nextMove == MoveResultState.FREE) moves.add(new ChessMove(myPosition, pos, null));
-                    }
-                }
+                moves.addAll(moveStraight(board, piece, myPosition, pos, nextMove, promote));
             } else {
                 if (nextMove == MoveResultState.CAPTURE) {
                     if(!promote){
@@ -68,6 +56,27 @@ public class Pawn extends ChessMovementRule {
         promotionTypes.add(ChessPiece.PieceType.ROOK);
         for(ChessPiece.PieceType t : promotionTypes){
             moves.add(new ChessMove(start, end, t));
+        }
+        return moves;
+    }
+
+    public Collection<ChessMove> moveStraight(ChessBoard board, ChessPiece piece, ChessPosition startPos, ChessPosition endPos, MoveResultState nextMove, boolean promote){
+        ArrayList<ChessMove> moves = new ArrayList<>();
+        int direction = endPos.getRow() - startPos.getRow();
+        int row = endPos.getRow();
+        int col = endPos.getColumn();
+        if (nextMove == MoveResultState.FREE) {
+            if(!promote){
+                moves.add(new ChessMove(startPos, endPos, null));
+            }
+            else{
+                moves.addAll(getPromotions(startPos, endPos));
+            }
+            if ((direction == 1 && startPos.getRow() == 2) || (direction == -1) && startPos.getRow() == 7){
+                endPos = new ChessPosition((row + direction), col);
+                nextMove = moveResult(board, piece, endPos);
+                if(nextMove == MoveResultState.FREE) moves.add(new ChessMove(startPos, endPos, null));
+            }
         }
         return moves;
     }
