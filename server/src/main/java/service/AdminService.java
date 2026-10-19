@@ -1,13 +1,25 @@
 package service;
 
-import dataaccess.DataAccess;
+import dataaccess.AuthDAO;
+import dataaccess.GameDAO;
+import dataaccess.UserDAO;
 
 public class AdminService {
 
-    private DataAccess dataAccess;
+    private AuthDAO authDAO;
+    private UserDAO userDAO;
+    private GameDAO gameDAO;
 
-    public AdminService(DataAccess dataAccess){
-        this.dataAccess = dataAccess;
+    public AdminService(AuthDAO authDAO, GameDAO gameDAO, UserDAO userDAO) {
+        this.authDAO = authDAO;
+        this.userDAO = userDAO;
+        this.gameDAO = gameDAO;
+    }
+
+    public void clear(){
+        authDAO.clear();
+        userDAO.clear();
+        gameDAO.clear();
     }
 
 }

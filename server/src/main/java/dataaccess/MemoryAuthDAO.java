@@ -10,11 +10,15 @@ public class MemoryAuthDAO implements AuthDAO{
     private Map<String, AuthData> authDataMemory;
 
     public MemoryAuthDAO(){
-        authDataMemory = new HashMap<String, AuthData>();
+        authDataMemory = new HashMap<>();
     }
 
     public void clear(){
         authDataMemory.clear();
+    }
+
+    public boolean isEmpty(){
+        return authDataMemory.isEmpty();
     }
 
     @Override
@@ -28,8 +32,8 @@ public class MemoryAuthDAO implements AuthDAO{
     }
 
     @Override
-    public AuthData deleteAuth(String authToken) {
-        return authDataMemory.remove(authToken);
+    public void deleteAuth(String authToken) {
+        authDataMemory.remove(authToken);
     }
 
 
