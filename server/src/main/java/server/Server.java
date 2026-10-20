@@ -4,7 +4,9 @@ import com.google.gson.Gson;
 import io.javalin.*;
 import io.javalin.http.Context;
 import org.jetbrains.annotations.NotNull;
+import server.models.RegisterResult;
 import service.AlreadyTakenException;
+import service.MissingArgumentException;
 
 import java.util.Map;
 
@@ -33,9 +35,16 @@ public class Server {
         var body = ctx.body();
         var json = new Gson();
         try{
-            handler.registerUser(body);
-        } catch (AlreadyTakenException e) {
+            RegisterResult result = handler.registerUser(body);
+            ctx.json(json.toJson(result));
+            ctx.status(200);
 
+        } catch (AlreadyTakenException e) {
+            ctx.json(json.toJson(Map.of("message", e.getMessage())));
+            ctx.status(403);
+        } catch (MissingArgumentException e){
+            ctx.json(json.toJson(Map.of("message", e.getMessage())));
+            ctx.status(400);
         }
 
     }

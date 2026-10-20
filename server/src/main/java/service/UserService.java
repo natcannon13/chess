@@ -19,7 +19,10 @@ public class UserService {
         this.userDAO = userDAO;
     }
 
-    public RegisterResult register(RegisterRequest request) throws AlreadyTakenException{
+    public RegisterResult register(RegisterRequest request) throws AlreadyTakenException, MissingArgumentException {
+        if(request.password() == null || request.password().isBlank()){
+            throw new MissingArgumentException("Error: bad request");
+        }
         UserData user = userDAO.getUser(request.username());
         if(user != null){
             throw new AlreadyTakenException("Error: already taken");
@@ -28,7 +31,7 @@ public class UserService {
             userDAO.createUser(new UserData(request.username(), request.password(), request.email()));
             String authToken = UUID.randomUUID().toString();
             authDAO.createAuth(new AuthData(authToken, request.username()));
-            return new RegisterResult(authToken, request.username());
+            return new RegisterResult(request.username(), authToken);
         }
     }
 

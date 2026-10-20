@@ -33,7 +33,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("Registration succeeds")
-    public void registerSuccess() throws AlreadyTakenException {
+    public void registerSuccess() throws AlreadyTakenException, MissingArgumentException {
         RegisterResult result = userService.register(registerRequest);
         Assertions.assertEquals(registerRequest.username(), result.username());
         Assertions.assertEquals(36, result.authToken().length());
@@ -41,8 +41,14 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("Registration fails")
-    public void registerFailure() throws AlreadyTakenException {
+    public void registerFailure() throws AlreadyTakenException, MissingArgumentException {
         RegisterResult result = userService.register(registerRequest);
+        Assertions.assertThrows(MissingArgumentException.class, () -> {
+            userService.register(new RegisterRequest("1", null, "@"));
+        });
+        Assertions.assertThrows(MissingArgumentException.class, () -> {
+            userService.register(new RegisterRequest("1", "", "@"));
+        });
         Assertions.assertThrows(AlreadyTakenException.class, () -> {
             userService.register(registerRequest);
         });
