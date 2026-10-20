@@ -10,6 +10,7 @@ import java.util.Map;
 public class Server {
 
     private final Javalin javalin;
+    private static final Handler handler = new Handler();
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
@@ -23,6 +24,8 @@ public class Server {
         var r = Map.of();
         var json = new Gson();
         ctx.json(json.toJson(r));
+        handler.clear();
+        ctx.status(200);
     }
 
     public int run(int desiredPort) {
