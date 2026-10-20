@@ -53,6 +53,14 @@ public class UserService {
         return new LoginResult(request.username(), authToken);
     }
 
+    public void logout(String authToken) throws UnauthorizedException{
+        AuthData data = authDAO.getAuth(authToken);
+        if(data == null){
+            throw new UnauthorizedException("Error: unauthorized");
+
+        }
+        authDAO.deleteAuth(authToken);
+    }
     
 
 }

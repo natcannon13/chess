@@ -23,6 +23,7 @@ public class Server {
         // Register your endpoints and exception handlers here.
         javalin.post("/user", Server::registerUser);
         javalin.post("/session", Server::loginUser);
+        javalin.delete("/session", Server::logoutUser);
         javalin.delete("/db", Server::clearDb);
     }
 
@@ -62,6 +63,19 @@ public class Server {
             ctx.json(json.toJson(Map.of("message", e.getMessage())));
             ctx.status(400);
         } catch (UnauthorizedException e){
+            ctx.json(json.toJson(Map.of("message", e.getMessage())));
+            ctx.status(401);
+        }
+    }
+
+    private static void logoutUser(@NotNull Context ctx){
+        var body = ctx.body();
+        var json = new Gson();
+        try {
+            handler.logoutUser(body);
+            ctx.json(json.toJson(Map.of()));
+            ctx.status(200);
+        } catch(UnauthorizedException e){
             ctx.json(json.toJson(Map.of("message", e.getMessage())));
             ctx.status(401);
         }

@@ -9,6 +9,7 @@ import server.models.RegisterRequest;
 import server.models.RegisterResult;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class UserServiceTest {
 
@@ -110,4 +111,22 @@ public class UserServiceTest {
         });
     }
 
+    @Test
+    @DisplayName("Logout succeeds")
+    public void logoutSuccess() throws UnauthorizedException, MissingArgumentException, AlreadyTakenException {
+        RegisterResult result = userService.register(registerRequest);
+        String authToken = result.authToken();
+        userService.logout(authToken);
+        Assertions.assertNull(authDAO.getAuth(authToken));
+    }
+
+    @Test
+    @DisplayName("Logout fails with invalid token")
+    public void logoutFails() throws MissingArgumentException, AlreadyTakenException {
+        RegisterResult result = userService.register(registerRequest);
+        String authToken = result.authToken().substring(0, 32) + "0000";
+        Assertions.assertThrows(UnauthorizedException.class, () -> {
+            userService.logout(authToken);
+        });
+    }
 }
