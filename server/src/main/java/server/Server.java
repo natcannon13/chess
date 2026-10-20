@@ -4,9 +4,11 @@ import com.google.gson.Gson;
 import io.javalin.*;
 import io.javalin.http.Context;
 import org.jetbrains.annotations.NotNull;
+import server.models.LoginResult;
 import server.models.RegisterResult;
 import service.AlreadyTakenException;
 import service.MissingArgumentException;
+import service.UnauthorizedException;
 
 import java.util.Map;
 
@@ -20,6 +22,7 @@ public class Server {
 
         // Register your endpoints and exception handlers here.
         javalin.post("/user", Server::registerUser);
+        javalin.post("/session", Server::loginUser);
         javalin.delete("/db", Server::clearDb);
     }
 
@@ -46,7 +49,22 @@ public class Server {
             ctx.json(json.toJson(Map.of("message", e.getMessage())));
             ctx.status(400);
         }
+    }
 
+    private static void loginUser(@NotNull Context ctx){
+        var body = ctx.body();
+        var json = new Gson();
+        try{
+            LoginResult result = handler.loginUser(body);
+            ctx.json(json.toJson(result));
+            ctx.status(200);
+        } catch(MissingArgumentException e){
+            ctx.json(json.toJson(Map.of("message", e.getMessage())));
+            ctx.status(400);
+        } catch (UnauthorizedException e){
+            ctx.json(json.toJson(Map.of("message", e.getMessage())));
+            ctx.status(401);
+        }
     }
 
     public int run(int desiredPort) {

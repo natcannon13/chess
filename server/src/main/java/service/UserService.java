@@ -38,12 +38,12 @@ public class UserService {
     }
 
     public LoginResult login(LoginRequest request) throws MissingArgumentException, UnauthorizedException{
-        if(request.password() == null || request.password().isBlank()){
+        if(request.password() == null || request.password().isBlank() || request.username() == null || request.username().isBlank()){
             throw new MissingArgumentException("Error: bad request");
         }
         UserData user = userDAO.getUser(request.username());
         if(user == null){
-            throw new MissingArgumentException("Error: bad request");
+            throw new UnauthorizedException("Error: unauthorized");
         }
         if(!request.password().equals(user.password())){
             throw new UnauthorizedException("Error: unauthorized");

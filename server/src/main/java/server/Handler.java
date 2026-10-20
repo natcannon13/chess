@@ -2,6 +2,8 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.*;
+import server.models.LoginRequest;
+import server.models.LoginResult;
 import server.models.RegisterRequest;
 import server.models.RegisterResult;
 import service.*;
@@ -32,5 +34,11 @@ public class Handler {
         var json = new Gson();
         RegisterRequest request = json.fromJson(userInfo, RegisterRequest.class);
         return userService.register(request);
+    }
+
+    public LoginResult loginUser(String loginInfo) throws MissingArgumentException, UnauthorizedException{
+        var json = new Gson();
+        LoginRequest request = json.fromJson(loginInfo, LoginRequest.class);
+        return userService.login(request);
     }
 }

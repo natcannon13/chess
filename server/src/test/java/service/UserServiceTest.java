@@ -75,14 +75,29 @@ public class UserServiceTest {
     @DisplayName("Login fails where password isn't included")
     public void loginNoPassword(){
         Assertions.assertThrows(MissingArgumentException.class, ()-> {
+            userService.login(new LoginRequest("ncannon", null));
+        });
+        Assertions.assertThrows(MissingArgumentException.class, ()-> {
             userService.login(new LoginRequest("ncannon", ""));
         });
     }
 
     @Test
+    @DisplayName("Login fails where username isn't included")
+    public void loginNoUsername(){
+        Assertions.assertThrows(MissingArgumentException.class, ()->{
+            userService.login(new LoginRequest(null, "123"));
+        });
+        Assertions.assertThrows(MissingArgumentException.class, ()->{
+            userService.login(new LoginRequest("", "123"));
+        });
+    }
+
+
+    @Test
     @DisplayName("Login fails where user isn't registered")
     public void loginNotRegistered(){
-        Assertions.assertThrows(MissingArgumentException.class, () -> {
+        Assertions.assertThrows(UnauthorizedException.class, () -> {
         userService.login(new LoginRequest("ncannon", "12504"));});
     }
 
