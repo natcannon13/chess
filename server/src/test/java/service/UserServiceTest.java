@@ -3,6 +3,8 @@ package service;
 import dataaccess.*;
 import model.UserData;
 import org.junit.jupiter.api.*;
+import server.models.LoginRequest;
+import server.models.LoginResult;
 import server.models.RegisterRequest;
 import server.models.RegisterResult;
 
@@ -40,17 +42,56 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("Registration fails")
+    @DisplayName("Re-registration fails")
     public void registerFailure() throws AlreadyTakenException, MissingArgumentException {
         RegisterResult result = userService.register(registerRequest);
+        Assertions.assertThrows(AlreadyTakenException.class, () -> {
+            userService.register(registerRequest);
+        });
+    }
+
+    @Test
+    @DisplayName("Registration with no password fails")
+    public void registerNoPassword(){
         Assertions.assertThrows(MissingArgumentException.class, () -> {
             userService.register(new RegisterRequest("1", null, "@"));
         });
         Assertions.assertThrows(MissingArgumentException.class, () -> {
             userService.register(new RegisterRequest("1", "", "@"));
         });
-        Assertions.assertThrows(AlreadyTakenException.class, () -> {
-            userService.register(registerRequest);
+    }
+
+
+    @Test
+    @DisplayName("Login succeeds")
+    public void loginSuccess() throws MissingArgumentException, UnauthorizedException, AlreadyTakenException {
+        userService.register(registerRequest);
+        LoginResult result = userService.login(new LoginRequest("ncannon", "password"));
+        Assertions.assertEquals("ncannon", result.username());
+        Assertions.assertEquals(36, result.authToken().length());
+    }
+
+    @Test
+    @DisplayName("Login fails where password isn't included")
+    public void loginNoPassword(){
+        Assertions.assertThrows(MissingArgumentException.class, ()-> {
+            userService.login(new LoginRequest("ncannon", ""));
+        });
+    }
+
+    @Test
+    @DisplayName("Login fails where user isn't registered")
+    public void loginNotRegistered(){
+        Assertions.assertThrows(MissingArgumentException.class, () -> {
+        userService.login(new LoginRequest("ncannon", "12504"));});
+    }
+
+    @Test
+    @DisplayName("Login fails where password is wrong")
+    public void loginIncorrectPassword() throws MissingArgumentException, AlreadyTakenException {
+        userService.register(registerRequest);
+        Assertions.assertThrows(UnauthorizedException.class, ()-> {
+            LoginResult result = userService.login(new LoginRequest("ncannon", "password1"));
         });
     }
 
