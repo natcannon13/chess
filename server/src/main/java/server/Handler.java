@@ -42,9 +42,7 @@ public class Handler {
         return userService.login(request);
     }
 
-    public void logoutUser(String authInfo) throws UnauthorizedException{
-        var json = new Gson();
-        String authToken = json.fromJson(authInfo, String.class);
+    public void logoutUser(String authToken) throws UnauthorizedException{
         userService.logout(authToken);
     }
 }

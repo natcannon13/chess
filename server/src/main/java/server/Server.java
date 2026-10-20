@@ -69,10 +69,10 @@ public class Server {
     }
 
     private static void logoutUser(@NotNull Context ctx){
-        var body = ctx.body();
+        var header = ctx.headerMap();
         var json = new Gson();
         try {
-            handler.logoutUser(body);
+            handler.logoutUser(header.get("Authorization"));
             ctx.json(json.toJson(Map.of()));
             ctx.status(200);
         } catch(UnauthorizedException e){
