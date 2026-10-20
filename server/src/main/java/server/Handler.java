@@ -1,14 +1,18 @@
 package server;
 
+import com.google.gson.Gson;
 import dataaccess.*;
+import server.models.RegisterRequest;
+import server.models.RegisterResult;
 import service.AdminService;
+import service.AlreadyTakenException;
 import service.GameService;
 import service.UserService;
 
 public class Handler {
 
     private final AdminService adminService;
-    //private final UserService userService;
+    private final UserService userService;
     //private final GameService gameService;
 
     private final AuthDAO authDAO;
@@ -20,9 +24,16 @@ public class Handler {
         gameDAO = new MemoryGameDAO();
         authDAO = new MemoryAuthDAO();
         adminService = new AdminService(authDAO, gameDAO, userDAO);
+        userService = new UserService(authDAO, userDAO);
     }
 
     public void clear(){
         adminService.clear();
+    }
+
+    public RegisterResult registerUser(String userInfo) throws AlreadyTakenException {
+        var json = new Gson();
+        RegisterRequest request = json.fromJson(userInfo, RegisterRequest.class);
+        return userService.register(request);
     }
 }
