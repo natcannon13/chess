@@ -2,8 +2,11 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.*;
+import model.GameData;
 import server.models.*;
 import service.*;
+
+import java.util.List;
 
 public class Handler {
 
@@ -42,6 +45,10 @@ public class Handler {
 
     public void logoutUser(String authToken) throws UnauthorizedException{
         userService.logout(authToken);
+    }
+
+    public List<GameData> listGames (String authToken) throws UnauthorizedException{
+        return gameService.listGames(authToken);
     }
 
     public int createGame(String authToken, String gameInfo) throws UnauthorizedException, BadArgumentException {

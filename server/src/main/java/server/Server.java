@@ -24,7 +24,7 @@ public class Server {
         javalin.post("/user", Server::registerUser);
         javalin.post("/session", Server::loginUser);
         javalin.delete("/session", Server::logoutUser);
-
+        javalin.get("/game", Server::listGames);
         javalin.post("/game", Server::createGame);
         javalin.put("/game", Server::joinGame);
         javalin.delete("/db", Server::clearDb);
@@ -69,6 +69,19 @@ public class Server {
         try {
             HANDLER.logoutUser(header.get("Authorization"));
             ctx.json(json.toJson(Map.of()));
+            ctx.status(200);
+        } catch(UnauthorizedException e){
+            ctx.json(json.toJson(Map.of("message", e.getMessage())));
+            ctx.status(401);
+        }
+    }
+
+    private static void listGames(@NotNull Context ctx){
+        var header = ctx.headerMap();
+        var json = new Gson();
+        try{
+            var games = HANDLER.listGames(header.get("Authorization"));
+            ctx.json(json.toJson(Map.of("games", games)));
             ctx.status(200);
         } catch(UnauthorizedException e){
             ctx.json(json.toJson(Map.of("message", e.getMessage())));
