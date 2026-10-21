@@ -2,10 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.*;
-import server.models.LoginRequest;
-import server.models.LoginResult;
-import server.models.RegisterRequest;
-import server.models.RegisterResult;
+import server.models.*;
 import service.*;
 
 public class Handler {
@@ -51,6 +48,12 @@ public class Handler {
         var json = new Gson();
         GameName name = json.fromJson(gameInfo, GameName.class);
         return gameService.createGame(authToken, name.gameName());
+    }
+
+    public void joinGame(String authToken, String joinInfo) throws UnauthorizedException, BadArgumentException, AlreadyTakenException{
+        var json = new Gson();
+        GameJoinRequest request = json.fromJson(joinInfo, GameJoinRequest.class);
+        gameService.joinGame(authToken, request);
     }
 
     private record GameName(String gameName){}

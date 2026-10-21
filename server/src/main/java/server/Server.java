@@ -26,16 +26,8 @@ public class Server {
         javalin.delete("/session", Server::logoutUser);
 
         javalin.post("/game", Server::createGame);
-
+        javalin.put("/game", Server::joinGame);
         javalin.delete("/db", Server::clearDb);
-    }
-
-    private static void clearDb(@NotNull Context ctx) {
-        var r = Map.of();
-        var json = new Gson();
-        HANDLER.clear();
-        ctx.json(json.toJson(r));
-        ctx.status(200);
     }
 
     private static void registerUser(@NotNull Context ctx){
@@ -99,6 +91,35 @@ public class Server {
             ctx.json(json.toJson(Map.of("message", e.getMessage())));
             ctx.status(401);
         }
+    }
+
+    private static void joinGame(@NotNull Context ctx){
+        var header = ctx.headerMap();
+        var json = new Gson();
+        var body = ctx.body();
+        try{
+            HANDLER.joinGame(header.get("Authorization"), body);
+            ctx.json(json.toJson(Map.of()));
+            ctx.status(200);
+        } catch (AlreadyTakenException e) {
+            ctx.json(json.toJson(Map.of("message", e.getMessage())));
+            ctx.status(403);
+        } catch (BadArgumentException e){
+            ctx.json(json.toJson(Map.of("message", e.getMessage())));
+            ctx.status(400);
+        }
+        catch (UnauthorizedException e){
+            ctx.json(json.toJson(Map.of("message", e.getMessage())));
+            ctx.status(401);
+        }
+    }
+
+    private static void clearDb(@NotNull Context ctx) {
+        var r = Map.of();
+        var json = new Gson();
+        HANDLER.clear();
+        ctx.json(json.toJson(r));
+        ctx.status(200);
     }
 
     public int run(int desiredPort) {
