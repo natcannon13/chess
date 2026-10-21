@@ -12,7 +12,7 @@ public class Handler {
 
     private final AdminService adminService;
     private final UserService userService;
-    //private final GameService gameService;
+    private final GameService gameService;
 
     private final AuthDAO authDAO;
     private final GameDAO gameDAO;
@@ -24,6 +24,7 @@ public class Handler {
         authDAO = new MemoryAuthDAO();
         adminService = new AdminService(authDAO, gameDAO, userDAO);
         userService = new UserService(authDAO, userDAO);
+        gameService = new GameService(authDAO, gameDAO);
     }
 
     public void clear(){
@@ -45,4 +46,12 @@ public class Handler {
     public void logoutUser(String authToken) throws UnauthorizedException{
         userService.logout(authToken);
     }
+
+    public int createGame(String authToken, String gameInfo) throws UnauthorizedException, MissingArgumentException{
+        var json = new Gson();
+        GameName name = json.fromJson(gameInfo, GameName.class);
+        return gameService.createGame(authToken, name.gameName());
+    }
+
+    private record GameName(String gameName){}
 }

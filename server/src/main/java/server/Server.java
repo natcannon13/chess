@@ -24,6 +24,9 @@ public class Server {
         javalin.post("/user", Server::registerUser);
         javalin.post("/session", Server::loginUser);
         javalin.delete("/session", Server::logoutUser);
+
+        javalin.post("/game", Server::createGame);
+
         javalin.delete("/db", Server::clearDb);
     }
 
@@ -76,6 +79,23 @@ public class Server {
             ctx.json(json.toJson(Map.of()));
             ctx.status(200);
         } catch(UnauthorizedException e){
+            ctx.json(json.toJson(Map.of("message", e.getMessage())));
+            ctx.status(401);
+        }
+    }
+
+    private static void createGame(@NotNull Context ctx){
+        var header = ctx.headerMap();
+        var json = new Gson();
+        var body = ctx.body();
+        try{
+            int id = handler.createGame(header.get("Authorization"), body);
+            ctx.json(json.toJson(Map.of("gameID", id)));
+            ctx.status(200);
+        } catch(MissingArgumentException e){
+            ctx.json(json.toJson(Map.of("message", e.getMessage())));
+            ctx.status(400);
+        } catch (UnauthorizedException e){
             ctx.json(json.toJson(Map.of("message", e.getMessage())));
             ctx.status(401);
         }
