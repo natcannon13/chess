@@ -7,6 +7,10 @@ import org.junit.jupiter.api.*;
 import server.models.GameJoinRequest;
 import server.models.RegisterRequest;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 public class GameServiceTest {
 
     private static AuthDAO authDAO;
@@ -101,6 +105,36 @@ public class GameServiceTest {
         Assertions.assertThrows(AlreadyTakenException.class, () -> {
             gameService.joinGame("2", new GameJoinRequest("WHITE", id));
         });
+    }
+
+    @Test
+    @DisplayName("List Game succeeds with one game")
+    public void listGameSuccessOne() throws BadArgumentException {
+        int id = gameService.createGame("1", "testGame");
+        GameData data1 = gameDAO.getGame(id);
+        List<GameData> games = gameDAO.listGames();
+        Assertions.assertEquals(1, games.size());
+        Assertions.assertTrue(games.contains(data1));
+    }
+
+    @Test
+    @DisplayName("List Game succeeds with multiple games")
+    public void listGameSuccessMultiple() throws BadArgumentException {
+        int id = gameService.createGame("1", "testGame");
+        int id2 = gameService.createGame("1", "testGame2");
+        GameData data1 = gameDAO.getGame(id);
+        GameData data2 = gameDAO.getGame(id2);
+        List<GameData> games = gameDAO.listGames();
+        Assertions.assertEquals(2, games.size());
+        Assertions.assertTrue(games.contains(data1));
+        Assertions.assertTrue(games.contains(data2));
+    }
+
+    @Test
+    @DisplayName("List Game succeeds with no games")
+    public void listGameSuccessNone(){
+        Collection<GameData> games = gameDAO.listGames();
+        Assertions.assertEquals(0, games.size());
     }
 
 }

@@ -1,8 +1,7 @@
 package dataaccess;
 
 import model.GameData;
-
-import java.util.Collection;
+import java.util.List;
 
 public interface GameDAO {
 
@@ -10,7 +9,7 @@ public interface GameDAO {
     boolean isEmpty();
     GameData createGame(GameData gameData);
     GameData getGame(int id);
-    Collection<GameData> listGames();
+    List<GameData> listGames();
     void updateGame(GameData newInfo);
 
 }

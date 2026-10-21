@@ -6,8 +6,7 @@ import model.AuthData;
 import model.GameData;
 import server.models.GameJoinRequest;
 
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 
 public class GameService {
 
@@ -57,6 +56,11 @@ public class GameService {
         gameDAO.updateGame(newInfo);
     }
 
-
-
+    public List<GameData> listGames(String authToken) throws UnauthorizedException{
+        AuthData authData = authDAO.getAuth(authToken);
+        if(authData == null){
+            throw new UnauthorizedException("Error: unauthorized");
+        }
+        return gameDAO.listGames();
+    }
 }
