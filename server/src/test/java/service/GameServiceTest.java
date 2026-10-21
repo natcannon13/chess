@@ -2,15 +2,10 @@ package service;
 
 import dataaccess.*;
 import model.AuthData;
-import model.UserData;
+import model.GameData;
 import org.junit.jupiter.api.*;
-import server.models.LoginRequest;
-import server.models.LoginResult;
+import server.models.GameJoinRequest;
 import server.models.RegisterRequest;
-import server.models.RegisterResult;
-
-import java.util.Objects;
-import java.util.UUID;
 
 public class GameServiceTest {
 
@@ -19,7 +14,7 @@ public class GameServiceTest {
     private static UserDAO userDAO;
     private static AdminService adminService;
     private static GameService gameService;
-    private static final RegisterRequest registerRequest = new RegisterRequest("ncannon", "password", "n@example.com");
+    private static final RegisterRequest REGISTER_REQUEST = new RegisterRequest("ncannon", "password", "n@example.com");
 
     @BeforeAll
     public static void init() {
@@ -38,7 +33,7 @@ public class GameServiceTest {
 
     @Test
     @DisplayName("Create Game Succeeds")
-    public void createGameSuccess() throws MissingArgumentException {
+    public void createGameSuccess() throws BadArgumentException {
         int gameID = gameService.createGame("1", "game");
         Assertions.assertEquals(4, String.valueOf(gameID).length());
     }
@@ -46,10 +41,10 @@ public class GameServiceTest {
     @Test
     @DisplayName("Create Game fails with no game name")
     public void createGameNoName(){
-        Assertions.assertThrows(MissingArgumentException.class, () -> {
+        Assertions.assertThrows(BadArgumentException.class, () -> {
             gameService.createGame("1", null);
         });
-        Assertions.assertThrows(MissingArgumentException.class, () -> {
+        Assertions.assertThrows(BadArgumentException.class, () -> {
             gameService.createGame("1", "");
         });
     }
@@ -59,6 +54,52 @@ public class GameServiceTest {
     public void createGameBadAuth(){
         Assertions.assertThrows(UnauthorizedException.class, () -> {
             gameService.createGame("2", "game");
+        });
+    }
+
+    @Test
+    @DisplayName("Join Game succeeds")
+    public void joinGameSuccess() throws BadArgumentException, AlreadyTakenException {
+        int id = gameService.createGame("1", "testGame");
+        gameService.joinGame("1", new GameJoinRequest("WHITE", id));
+        GameData data = gameDAO.getGame(id);
+        Assertions.assertEquals("aaaaa", data.whiteUsername());
+    }
+
+    @Test
+    @DisplayName("Join Game fails with invalid auth")
+    public void joinGameBadAuth(){
+        Assertions.assertThrows(UnauthorizedException.class, () -> {
+            gameService.joinGame("2", new GameJoinRequest("WHITE", 2));
+        });
+    }
+
+    @Test
+    @DisplayName("Join Game fails with bad color")
+    public void joinGameBadColor() throws BadArgumentException {
+        int id = gameService.createGame("1", "testGame");
+        Assertions.assertThrows(BadArgumentException.class, () -> {
+            gameService.joinGame("1", new GameJoinRequest("GREEN", id));
+        });
+    }
+
+    @Test
+    @DisplayName("Join Game fails when no game found")
+    public void joinGameBadID() throws BadArgumentException {
+        int id = gameService.createGame("1", "testGame");
+        Assertions.assertThrows(BadArgumentException.class, () -> {
+            gameService.joinGame("1", new GameJoinRequest("WHITE", id + 1));
+        });
+    }
+
+    @Test
+    @DisplayName("Join Game fails when spot is taken")
+    public void joinGameAlreadyTaken() throws BadArgumentException, AlreadyTakenException {
+        authDAO.createAuth(new AuthData("2", "bbbbb"));
+        int id = gameService.createGame("1", "testGame");
+        gameService.joinGame("1", new GameJoinRequest("WHITE", id));
+        Assertions.assertThrows(AlreadyTakenException.class, () -> {
+            gameService.joinGame("2", new GameJoinRequest("WHITE", id));
         });
     }
 

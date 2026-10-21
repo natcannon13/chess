@@ -31,8 +31,8 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
-    public GameData getGame(int ID) {
-        return gameDataMemory.get(ID);
+    public GameData getGame(int id) {
+        return gameDataMemory.get(id);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
-    public GameData updateGame() {
-        return null;
+    public void updateGame(GameData newInfo) {
+        gameDataMemory.replace(newInfo.gameID(), newInfo);
     }
 }

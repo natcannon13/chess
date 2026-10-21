@@ -1,15 +1,11 @@
 package service;
 
 import dataaccess.*;
-import model.UserData;
 import org.junit.jupiter.api.*;
 import server.models.LoginRequest;
 import server.models.LoginResult;
 import server.models.RegisterRequest;
 import server.models.RegisterResult;
-
-import java.util.Objects;
-import java.util.UUID;
 
 public class UserServiceTest {
 
@@ -18,7 +14,7 @@ public class UserServiceTest {
     private static UserDAO userDAO;
     private static AdminService adminService;
     private static UserService userService;
-    private static final RegisterRequest registerRequest = new RegisterRequest("ncannon", "password", "n@example.com");
+    private static final RegisterRequest REGISTER_REQUEST = new RegisterRequest("ncannon", "password", "n@example.com");
 
     @BeforeAll
     public static void init(){
@@ -36,28 +32,28 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("Registration succeeds")
-    public void registerSuccess() throws AlreadyTakenException, MissingArgumentException {
-        RegisterResult result = userService.register(registerRequest);
-        Assertions.assertEquals(registerRequest.username(), result.username());
+    public void registerSuccess() throws AlreadyTakenException, BadArgumentException {
+        RegisterResult result = userService.register(REGISTER_REQUEST);
+        Assertions.assertEquals(REGISTER_REQUEST.username(), result.username());
         Assertions.assertEquals(36, result.authToken().length());
     }
 
     @Test
     @DisplayName("Re-registration fails")
-    public void registerFailure() throws AlreadyTakenException, MissingArgumentException {
-        RegisterResult result = userService.register(registerRequest);
+    public void registerFailure() throws AlreadyTakenException, BadArgumentException {
+        RegisterResult result = userService.register(REGISTER_REQUEST);
         Assertions.assertThrows(AlreadyTakenException.class, () -> {
-            userService.register(registerRequest);
+            userService.register(REGISTER_REQUEST);
         });
     }
 
     @Test
     @DisplayName("Registration with no password fails")
     public void registerNoPassword(){
-        Assertions.assertThrows(MissingArgumentException.class, () -> {
+        Assertions.assertThrows(BadArgumentException.class, () -> {
             userService.register(new RegisterRequest("1", null, "@"));
         });
-        Assertions.assertThrows(MissingArgumentException.class, () -> {
+        Assertions.assertThrows(BadArgumentException.class, () -> {
             userService.register(new RegisterRequest("1", "", "@"));
         });
     }
@@ -65,8 +61,8 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("Login succeeds")
-    public void loginSuccess() throws MissingArgumentException, UnauthorizedException, AlreadyTakenException {
-        userService.register(registerRequest);
+    public void loginSuccess() throws BadArgumentException, UnauthorizedException, AlreadyTakenException {
+        userService.register(REGISTER_REQUEST);
         LoginResult result = userService.login(new LoginRequest("ncannon", "password"));
         Assertions.assertEquals("ncannon", result.username());
         Assertions.assertEquals(36, result.authToken().length());
@@ -75,10 +71,10 @@ public class UserServiceTest {
     @Test
     @DisplayName("Login fails where password isn't included")
     public void loginNoPassword(){
-        Assertions.assertThrows(MissingArgumentException.class, ()-> {
+        Assertions.assertThrows(BadArgumentException.class, ()-> {
             userService.login(new LoginRequest("ncannon", null));
         });
-        Assertions.assertThrows(MissingArgumentException.class, ()-> {
+        Assertions.assertThrows(BadArgumentException.class, ()-> {
             userService.login(new LoginRequest("ncannon", ""));
         });
     }
@@ -86,10 +82,10 @@ public class UserServiceTest {
     @Test
     @DisplayName("Login fails where username isn't included")
     public void loginNoUsername(){
-        Assertions.assertThrows(MissingArgumentException.class, ()->{
+        Assertions.assertThrows(BadArgumentException.class, ()->{
             userService.login(new LoginRequest(null, "123"));
         });
-        Assertions.assertThrows(MissingArgumentException.class, ()->{
+        Assertions.assertThrows(BadArgumentException.class, ()->{
             userService.login(new LoginRequest("", "123"));
         });
     }
@@ -104,8 +100,8 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("Login fails where password is wrong")
-    public void loginIncorrectPassword() throws MissingArgumentException, AlreadyTakenException {
-        userService.register(registerRequest);
+    public void loginIncorrectPassword() throws BadArgumentException, AlreadyTakenException {
+        userService.register(REGISTER_REQUEST);
         Assertions.assertThrows(UnauthorizedException.class, ()-> {
             LoginResult result = userService.login(new LoginRequest("ncannon", "password1"));
         });
@@ -113,8 +109,8 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("Logout succeeds")
-    public void logoutSuccess() throws UnauthorizedException, MissingArgumentException, AlreadyTakenException {
-        RegisterResult result = userService.register(registerRequest);
+    public void logoutSuccess() throws UnauthorizedException, BadArgumentException, AlreadyTakenException {
+        RegisterResult result = userService.register(REGISTER_REQUEST);
         String authToken = result.authToken();
         userService.logout(authToken);
         Assertions.assertNull(authDAO.getAuth(authToken));
@@ -122,8 +118,8 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("Logout fails with invalid token")
-    public void logoutFails() throws MissingArgumentException, AlreadyTakenException {
-        RegisterResult result = userService.register(registerRequest);
+    public void logoutFails() throws BadArgumentException, AlreadyTakenException {
+        RegisterResult result = userService.register(REGISTER_REQUEST);
         String authToken = result.authToken().substring(0, 32) + "0000";
         Assertions.assertThrows(UnauthorizedException.class, () -> {
             userService.logout(authToken);

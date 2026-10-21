@@ -21,9 +21,9 @@ public class UserService {
         this.userDAO = userDAO;
     }
 
-    public RegisterResult register(RegisterRequest request) throws AlreadyTakenException, MissingArgumentException {
+    public RegisterResult register(RegisterRequest request) throws AlreadyTakenException, BadArgumentException {
         if(request.password() == null || request.password().isBlank()){
-            throw new MissingArgumentException("Error: bad request");
+            throw new BadArgumentException("Error: bad request");
         }
         UserData user = userDAO.getUser(request.username());
         if(user != null){
@@ -37,9 +37,9 @@ public class UserService {
         }
     }
 
-    public LoginResult login(LoginRequest request) throws MissingArgumentException, UnauthorizedException{
+    public LoginResult login(LoginRequest request) throws BadArgumentException, UnauthorizedException{
         if(request.password() == null || request.password().isBlank() || request.username() == null || request.username().isBlank()){
-            throw new MissingArgumentException("Error: bad request");
+            throw new BadArgumentException("Error: bad request");
         }
         UserData user = userDAO.getUser(request.username());
         if(user == null){

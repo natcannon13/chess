@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import server.models.LoginResult;
 import server.models.RegisterResult;
 import service.AlreadyTakenException;
-import service.MissingArgumentException;
+import service.BadArgumentException;
 import service.UnauthorizedException;
 
 import java.util.Map;
@@ -15,7 +15,7 @@ import java.util.Map;
 public class Server {
 
     private final Javalin javalin;
-    private static final Handler handler = new Handler();
+    private static final Handler HANDLER = new Handler();
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
@@ -33,7 +33,7 @@ public class Server {
     private static void clearDb(@NotNull Context ctx) {
         var r = Map.of();
         var json = new Gson();
-        handler.clear();
+        HANDLER.clear();
         ctx.json(json.toJson(r));
         ctx.status(200);
     }
@@ -42,14 +42,14 @@ public class Server {
         var body = ctx.body();
         var json = new Gson();
         try{
-            RegisterResult result = handler.registerUser(body);
+            RegisterResult result = HANDLER.registerUser(body);
             ctx.json(json.toJson(result));
             ctx.status(200);
 
         } catch (AlreadyTakenException e) {
             ctx.json(json.toJson(Map.of("message", e.getMessage())));
             ctx.status(403);
-        } catch (MissingArgumentException e){
+        } catch (BadArgumentException e){
             ctx.json(json.toJson(Map.of("message", e.getMessage())));
             ctx.status(400);
         }
@@ -59,10 +59,10 @@ public class Server {
         var body = ctx.body();
         var json = new Gson();
         try{
-            LoginResult result = handler.loginUser(body);
+            LoginResult result = HANDLER.loginUser(body);
             ctx.json(json.toJson(result));
             ctx.status(200);
-        } catch(MissingArgumentException e){
+        } catch(BadArgumentException e){
             ctx.json(json.toJson(Map.of("message", e.getMessage())));
             ctx.status(400);
         } catch (UnauthorizedException e){
@@ -75,7 +75,7 @@ public class Server {
         var header = ctx.headerMap();
         var json = new Gson();
         try {
-            handler.logoutUser(header.get("Authorization"));
+            HANDLER.logoutUser(header.get("Authorization"));
             ctx.json(json.toJson(Map.of()));
             ctx.status(200);
         } catch(UnauthorizedException e){
@@ -89,10 +89,10 @@ public class Server {
         var json = new Gson();
         var body = ctx.body();
         try{
-            int id = handler.createGame(header.get("Authorization"), body);
+            int id = HANDLER.createGame(header.get("Authorization"), body);
             ctx.json(json.toJson(Map.of("gameID", id)));
             ctx.status(200);
-        } catch(MissingArgumentException e){
+        } catch(BadArgumentException e){
             ctx.json(json.toJson(Map.of("message", e.getMessage())));
             ctx.status(400);
         } catch (UnauthorizedException e){

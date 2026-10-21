@@ -31,13 +31,13 @@ public class Handler {
         adminService.clear();
     }
 
-    public RegisterResult registerUser(String userInfo) throws AlreadyTakenException, MissingArgumentException {
+    public RegisterResult registerUser(String userInfo) throws AlreadyTakenException, BadArgumentException {
         var json = new Gson();
         RegisterRequest request = json.fromJson(userInfo, RegisterRequest.class);
         return userService.register(request);
     }
 
-    public LoginResult loginUser(String loginInfo) throws MissingArgumentException, UnauthorizedException{
+    public LoginResult loginUser(String loginInfo) throws BadArgumentException, UnauthorizedException{
         var json = new Gson();
         LoginRequest request = json.fromJson(loginInfo, LoginRequest.class);
         return userService.login(request);
@@ -47,7 +47,7 @@ public class Handler {
         userService.logout(authToken);
     }
 
-    public int createGame(String authToken, String gameInfo) throws UnauthorizedException, MissingArgumentException{
+    public int createGame(String authToken, String gameInfo) throws UnauthorizedException, BadArgumentException {
         var json = new Gson();
         GameName name = json.fromJson(gameInfo, GameName.class);
         return gameService.createGame(authToken, name.gameName());
