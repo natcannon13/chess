@@ -62,12 +62,21 @@ public class GameServiceTest {
     }
 
     @Test
-    @DisplayName("Join Game succeeds")
-    public void joinGameSuccess() throws BadArgumentException, AlreadyTakenException {
+    @DisplayName("Join Game succeeds for white player")
+    public void joinGameSuccessWhite() throws BadArgumentException, AlreadyTakenException {
         int id = gameService.createGame("1", "testGame");
         gameService.joinGame("1", new GameJoinRequest("WHITE", id));
         GameData data = gameDAO.getGame(id);
         Assertions.assertEquals("aaaaa", data.whiteUsername());
+    }
+
+    @Test
+    @DisplayName("Join Game succeeds for black player")
+    public void joinGameSuccessBlack() throws BadArgumentException, AlreadyTakenException {
+        int id = gameService.createGame("1", "testGame");
+        gameService.joinGame("1", new GameJoinRequest("BLACK", id));
+        GameData data = gameDAO.getGame(id);
+        Assertions.assertEquals("aaaaa", data.blackUsername());
     }
 
     @Test
@@ -112,7 +121,7 @@ public class GameServiceTest {
     public void listGameSuccessOne() throws BadArgumentException {
         int id = gameService.createGame("1", "testGame");
         GameData data1 = gameDAO.getGame(id);
-        List<GameData> games = gameDAO.listGames();
+        List<GameData> games = gameService.listGames("1");
         Assertions.assertEquals(1, games.size());
         Assertions.assertTrue(games.contains(data1));
     }
@@ -124,7 +133,7 @@ public class GameServiceTest {
         int id2 = gameService.createGame("1", "testGame2");
         GameData data1 = gameDAO.getGame(id);
         GameData data2 = gameDAO.getGame(id2);
-        List<GameData> games = gameDAO.listGames();
+        List<GameData> games = gameService.listGames("1");
         Assertions.assertEquals(2, games.size());
         Assertions.assertTrue(games.contains(data1));
         Assertions.assertTrue(games.contains(data2));
@@ -133,8 +142,16 @@ public class GameServiceTest {
     @Test
     @DisplayName("List Game succeeds with no games")
     public void listGameSuccessNone(){
-        Collection<GameData> games = gameDAO.listGames();
+        List<GameData> games = gameService.listGames("1");
         Assertions.assertEquals(0, games.size());
+    }
+
+    @Test
+    @DisplayName("List Game fails with bad auth")
+    public void listGameBadAuth(){
+        Assertions.assertThrows(UnauthorizedException.class, () -> {
+            List<GameData> games = gameService.listGames("2");
+        });
     }
 
 }
