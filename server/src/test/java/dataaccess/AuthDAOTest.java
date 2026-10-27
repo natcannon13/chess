@@ -26,6 +26,7 @@ public class AuthDAOTest {
         Assertions.assertTrue(authDAO.isEmpty());
         authDAO.createAuth(data);
         Assertions.assertFalse(authDAO.isEmpty());
+        Assertions.assertEquals(data, authDAO.getAuth(data.authToken()));
     }
 
     @Test
@@ -36,6 +37,14 @@ public class AuthDAOTest {
         Assertions.assertFalse(authDAO.isEmpty());
         authDAO.clear();
         Assertions.assertTrue(authDAO.isEmpty());
+    }
+
+    @Test
+    @DisplayName("Delete")
+    public void delete() throws DataAccessException{
+        AuthData data = new AuthData("1", "nat");
+        authDAO.deleteAuth("1");
+        Assertions.assertNull(authDAO.getAuth("1"));
     }
 
 }

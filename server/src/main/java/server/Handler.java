@@ -43,21 +43,21 @@ public class Handler {
         return userService.login(request);
     }
 
-    public void logoutUser(String authToken) throws UnauthorizedException{
+    public void logoutUser(String authToken) throws UnauthorizedException, DataAccessException {
         userService.logout(authToken);
     }
 
-    public List<GameData> listGames (String authToken) throws UnauthorizedException{
+    public List<GameData> listGames (String authToken) throws UnauthorizedException, DataAccessException {
         return gameService.listGames(authToken);
     }
 
-    public int createGame(String authToken, String gameInfo) throws UnauthorizedException, BadArgumentException {
+    public int createGame(String authToken, String gameInfo) throws UnauthorizedException, BadArgumentException, DataAccessException {
         var json = new Gson();
         GameName name = json.fromJson(gameInfo, GameName.class);
         return gameService.createGame(authToken, name.gameName());
     }
 
-    public void joinGame(String authToken, String joinInfo) throws UnauthorizedException, BadArgumentException, AlreadyTakenException{
+    public void joinGame(String authToken, String joinInfo) throws UnauthorizedException, BadArgumentException, AlreadyTakenException, DataAccessException {
         var json = new Gson();
         GameJoinRequest request = json.fromJson(joinInfo, GameJoinRequest.class);
         gameService.joinGame(authToken, request);

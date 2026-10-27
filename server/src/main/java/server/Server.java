@@ -46,7 +46,8 @@ public class Server {
             ctx.json(json.toJson(Map.of("message", e.getMessage())));
             ctx.status(400);
         } catch (DataAccessException e){
-            //500
+            ctx.json(json.toJson(Map.of("message", e.getMessage())));
+            ctx.status(500);
         }
 
     }
@@ -65,7 +66,8 @@ public class Server {
             ctx.json(json.toJson(Map.of("message", e.getMessage())));
             ctx.status(401);
         } catch (DataAccessException e){
-            //500
+            ctx.json(json.toJson(Map.of("message", e.getMessage())));
+            ctx.status(500);
         }
     }
 
@@ -79,6 +81,9 @@ public class Server {
         } catch(UnauthorizedException e){
             ctx.json(json.toJson(Map.of("message", e.getMessage())));
             ctx.status(401);
+        } catch (DataAccessException e){
+            ctx.json(json.toJson(Map.of("message", e.getMessage())));
+            ctx.status(500);
         }
     }
 
@@ -92,6 +97,9 @@ public class Server {
         } catch(UnauthorizedException e){
             ctx.json(json.toJson(Map.of("message", e.getMessage())));
             ctx.status(401);
+        } catch (DataAccessException e){
+            ctx.json(json.toJson(Map.of("message", e.getMessage())));
+            ctx.status(500);
         }
     }
 
@@ -109,6 +117,9 @@ public class Server {
         } catch (UnauthorizedException e){
             ctx.json(json.toJson(Map.of("message", e.getMessage())));
             ctx.status(401);
+        } catch (DataAccessException e){
+            ctx.json(json.toJson(Map.of("message", e.getMessage())));
+            ctx.status(500);
         }
     }
 
@@ -126,10 +137,12 @@ public class Server {
         } catch (BadArgumentException e){
             ctx.json(json.toJson(Map.of("message", e.getMessage())));
             ctx.status(400);
-        }
-        catch (UnauthorizedException e){
+        } catch (UnauthorizedException e){
             ctx.json(json.toJson(Map.of("message", e.getMessage())));
             ctx.status(401);
+        } catch (DataAccessException e){
+            ctx.json(json.toJson(Map.of("message", e.getMessage())));
+            ctx.status(500);
         }
     }
 
@@ -141,7 +154,8 @@ public class Server {
             ctx.json(json.toJson(r));
             ctx.status(200);
         } catch (DataAccessException e){
-            //500
+            ctx.json(json.toJson(Map.of("message", e.getMessage())));
+            ctx.status(500);
         }
     }
 

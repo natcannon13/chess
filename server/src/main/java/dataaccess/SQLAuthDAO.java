@@ -4,6 +4,7 @@ import model.AuthData;
 
 import javax.xml.crypto.Data;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class SQLAuthDAO implements AuthDAO{
 
@@ -56,13 +57,11 @@ public class SQLAuthDAO implements AuthDAO{
 
     @Override
     public void createAuth(AuthData authData) throws DataAccessException {
-        var statement = "INSERT INTO auth VALUES ('"
-                + authData.authToken()
-                + "', '"
-                + authData.username()
-                + "')";
+        var statement = "INSERT INTO auth VALUES (?, ?)";
         try(var conn = DatabaseManager.getConnection()){
-            try(var preparedStatement = conn.prepareStatement(statement)){
+            try(var preparedStatement = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)){
+                preparedStatement.setString(1, authData.authToken());
+                preparedStatement.setString(2, authData.username());
                 preparedStatement.executeUpdate();
             }
         }
@@ -72,12 +71,36 @@ public class SQLAuthDAO implements AuthDAO{
     }
 
     @Override
-    public AuthData getAuth(String authToken) {
-        return null;
+    public AuthData getAuth(String authToken) throws DataAccessException {
+        var statement = "SELECT * FROM auth WHERE authToken=?";
+        try(var conn = DatabaseManager.getConnection()){
+            try(var preparedStatement = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)){
+                preparedStatement.setString(1, authToken);
+                var rs = preparedStatement.executeQuery();
+                if(rs.next()){
+                    String token = rs.getString("authToken");
+                    String username = rs.getString("username");
+                    return new AuthData(token, username);
+                }
+                return null;
+            }
+        }
+        catch(SQLException e){
+            throw new DataAccessException("Error: ");
+        }
     }
 
     @Override
-    public void deleteAuth(String authToken) {
-
+    public void deleteAuth(String authToken) throws DataAccessException {
+        var statement = "DELETE FROM auth WHERE authToken=?";
+        try(var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)) {
+                preparedStatement.setString(1, authToken);
+                var rs = preparedStatement.executeUpdate();
+            }
+        }
+        catch(SQLException e){
+            throw new DataAccessException("Error: ");
+        }
     }
 }

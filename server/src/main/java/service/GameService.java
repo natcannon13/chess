@@ -1,6 +1,7 @@
 package service;
 
 import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import model.AuthData;
 import model.GameData;
@@ -18,7 +19,7 @@ public class GameService {
         this.gameDAO = gameDAO;
     }
 
-    public int createGame(String authToken, String gameName) throws BadArgumentException {
+    public int createGame(String authToken, String gameName) throws BadArgumentException, DataAccessException {
         if(gameName == null || gameName.isBlank()){
             throw new BadArgumentException("Error: bad request");
         }
@@ -31,7 +32,7 @@ public class GameService {
         return gameID;
     }
 
-    public void joinGame(String authToken, GameJoinRequest request) throws BadArgumentException, UnauthorizedException, AlreadyTakenException{
+    public void joinGame(String authToken, GameJoinRequest request) throws BadArgumentException, UnauthorizedException, AlreadyTakenException, DataAccessException {
         AuthData authData = authDAO.getAuth(authToken);
         if(authData == null){
             throw new UnauthorizedException("Error: unauthorized");
@@ -56,7 +57,7 @@ public class GameService {
         gameDAO.updateGame(newInfo);
     }
 
-    public List<GameData> listGames(String authToken) throws UnauthorizedException{
+    public List<GameData> listGames(String authToken) throws UnauthorizedException, DataAccessException {
         AuthData authData = authDAO.getAuth(authToken);
         if(authData == null){
             throw new UnauthorizedException("Error: unauthorized");

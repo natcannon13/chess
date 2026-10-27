@@ -21,8 +21,8 @@ public class GameServiceTest {
     private static final RegisterRequest REGISTER_REQUEST = new RegisterRequest("ncannon", "password", "n@example.com");
 
     @BeforeAll
-    public static void init() {
-        authDAO = new MemoryAuthDAO();
+    public static void init() throws DataAccessException {
+        authDAO = new SQLAuthDAO();
         gameDAO = new MemoryGameDAO();
         userDAO = new MemoryUserDAO();
         adminService = new AdminService(authDAO, gameDAO, userDAO);
@@ -37,7 +37,7 @@ public class GameServiceTest {
 
     @Test
     @DisplayName("Create Game Succeeds")
-    public void createGameSuccess() throws BadArgumentException {
+    public void createGameSuccess() throws BadArgumentException, DataAccessException {
         int gameID = gameService.createGame("1", "game");
         Assertions.assertEquals(4, String.valueOf(gameID).length());
     }
@@ -63,7 +63,7 @@ public class GameServiceTest {
 
     @Test
     @DisplayName("Join Game succeeds for white player")
-    public void joinGameSuccessWhite() throws BadArgumentException, AlreadyTakenException {
+    public void joinGameSuccessWhite() throws BadArgumentException, AlreadyTakenException, DataAccessException {
         int id = gameService.createGame("1", "testGame");
         gameService.joinGame("1", new GameJoinRequest("WHITE", id));
         GameData data = gameDAO.getGame(id);
@@ -72,7 +72,7 @@ public class GameServiceTest {
 
     @Test
     @DisplayName("Join Game succeeds for black player")
-    public void joinGameSuccessBlack() throws BadArgumentException, AlreadyTakenException {
+    public void joinGameSuccessBlack() throws BadArgumentException, AlreadyTakenException, DataAccessException {
         int id = gameService.createGame("1", "testGame");
         gameService.joinGame("1", new GameJoinRequest("BLACK", id));
         GameData data = gameDAO.getGame(id);
@@ -89,7 +89,7 @@ public class GameServiceTest {
 
     @Test
     @DisplayName("Join Game fails with bad color")
-    public void joinGameBadColor() throws BadArgumentException {
+    public void joinGameBadColor() throws BadArgumentException, DataAccessException {
         int id = gameService.createGame("1", "testGame");
         Assertions.assertThrows(BadArgumentException.class, () -> {
             gameService.joinGame("1", new GameJoinRequest("GREEN", id));
@@ -98,7 +98,7 @@ public class GameServiceTest {
 
     @Test
     @DisplayName("Join Game fails when no game found")
-    public void joinGameBadID() throws BadArgumentException {
+    public void joinGameBadID() throws BadArgumentException, DataAccessException {
         int id = gameService.createGame("1", "testGame");
         Assertions.assertThrows(BadArgumentException.class, () -> {
             gameService.joinGame("1", new GameJoinRequest("WHITE", id + 1));
@@ -118,7 +118,7 @@ public class GameServiceTest {
 
     @Test
     @DisplayName("List Game succeeds with one game")
-    public void listGameSuccessOne() throws BadArgumentException {
+    public void listGameSuccessOne() throws BadArgumentException, DataAccessException {
         int id = gameService.createGame("1", "testGame");
         GameData data1 = gameDAO.getGame(id);
         List<GameData> games = gameService.listGames("1");
@@ -128,7 +128,7 @@ public class GameServiceTest {
 
     @Test
     @DisplayName("List Game succeeds with multiple games")
-    public void listGameSuccessMultiple() throws BadArgumentException {
+    public void listGameSuccessMultiple() throws BadArgumentException, DataAccessException {
         int id = gameService.createGame("1", "testGame");
         int id2 = gameService.createGame("1", "testGame2");
         GameData data1 = gameDAO.getGame(id);
@@ -141,7 +141,7 @@ public class GameServiceTest {
 
     @Test
     @DisplayName("List Game succeeds with no games")
-    public void listGameSuccessNone(){
+    public void listGameSuccessNone() throws DataAccessException {
         List<GameData> games = gameService.listGames("1");
         Assertions.assertEquals(0, games.size());
     }

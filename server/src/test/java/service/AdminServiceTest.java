@@ -14,8 +14,8 @@ public class AdminServiceTest{
     private static AdminService adminService;
 
     @BeforeAll
-    public static void init(){
-        authDAO = new MemoryAuthDAO();
+    public static void init() throws DataAccessException {
+        authDAO = new SQLAuthDAO();
         gameDAO = new MemoryGameDAO();
         userDAO = new MemoryUserDAO();
         adminService = new AdminService(authDAO, gameDAO, userDAO);

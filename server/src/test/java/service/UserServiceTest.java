@@ -17,8 +17,8 @@ public class UserServiceTest {
     private static final RegisterRequest REGISTER_REQUEST = new RegisterRequest("ncannon", "password", "n@example.com");
 
     @BeforeAll
-    public static void init(){
-        authDAO = new MemoryAuthDAO();
+    public static void init() throws DataAccessException {
+        authDAO = new SQLAuthDAO();
         gameDAO = new MemoryGameDAO();
         userDAO = new MemoryUserDAO();
         adminService = new AdminService(authDAO, gameDAO, userDAO);
