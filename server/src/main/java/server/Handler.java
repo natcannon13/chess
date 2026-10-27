@@ -27,17 +27,17 @@ public class Handler {
         gameService = new GameService(authDAO, gameDAO);
     }
 
-    public void clear(){
+    public void clear() throws DataAccessException {
         adminService.clear();
     }
 
-    public RegisterResult registerUser(String userInfo) throws AlreadyTakenException, BadArgumentException {
+    public RegisterResult registerUser(String userInfo) throws AlreadyTakenException, BadArgumentException, DataAccessException {
         var json = new Gson();
         RegisterRequest request = json.fromJson(userInfo, RegisterRequest.class);
         return userService.register(request);
     }
 
-    public LoginResult loginUser(String loginInfo) throws BadArgumentException, UnauthorizedException{
+    public LoginResult loginUser(String loginInfo) throws BadArgumentException, UnauthorizedException, DataAccessException {
         var json = new Gson();
         LoginRequest request = json.fromJson(loginInfo, LoginRequest.class);
         return userService.login(request);

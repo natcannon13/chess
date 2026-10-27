@@ -1,6 +1,7 @@
 package service;
 
 import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import model.AuthData;
 import model.UserData;
@@ -21,7 +22,7 @@ public class UserService {
         this.userDAO = userDAO;
     }
 
-    public RegisterResult register(RegisterRequest request) throws AlreadyTakenException, BadArgumentException {
+    public RegisterResult register(RegisterRequest request) throws AlreadyTakenException, BadArgumentException, DataAccessException {
         if(request.password() == null || request.password().isBlank()){
             throw new BadArgumentException("Error: bad request");
         }
@@ -37,7 +38,7 @@ public class UserService {
         }
     }
 
-    public LoginResult login(LoginRequest request) throws BadArgumentException, UnauthorizedException{
+    public LoginResult login(LoginRequest request) throws BadArgumentException, UnauthorizedException, DataAccessException {
         if(request.password() == null || request.password().isBlank() || request.username() == null || request.username().isBlank()){
             throw new BadArgumentException("Error: bad request");
         }

@@ -26,13 +26,13 @@ public class UserServiceTest {
     }
 
     @BeforeEach
-    public void clearData(){
+    public void clearData() throws DataAccessException {
         adminService.clear();
     }
 
     @Test
     @DisplayName("Registration succeeds")
-    public void registerSuccess() throws AlreadyTakenException, BadArgumentException {
+    public void registerSuccess() throws AlreadyTakenException, BadArgumentException, DataAccessException {
         RegisterResult result = userService.register(REGISTER_REQUEST);
         Assertions.assertEquals(REGISTER_REQUEST.username(), result.username());
         Assertions.assertEquals(36, result.authToken().length());
@@ -40,7 +40,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("Re-registration fails")
-    public void registerFailure() throws AlreadyTakenException, BadArgumentException {
+    public void registerFailure() throws AlreadyTakenException, BadArgumentException, DataAccessException {
         RegisterResult result = userService.register(REGISTER_REQUEST);
         Assertions.assertThrows(AlreadyTakenException.class, () -> {
             userService.register(REGISTER_REQUEST);
@@ -61,7 +61,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("Login succeeds")
-    public void loginSuccess() throws BadArgumentException, UnauthorizedException, AlreadyTakenException {
+    public void loginSuccess() throws BadArgumentException, UnauthorizedException, AlreadyTakenException, DataAccessException {
         userService.register(REGISTER_REQUEST);
         LoginResult result = userService.login(new LoginRequest("ncannon", "password"));
         Assertions.assertEquals("ncannon", result.username());
@@ -100,7 +100,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("Login fails where password is wrong")
-    public void loginIncorrectPassword() throws BadArgumentException, AlreadyTakenException {
+    public void loginIncorrectPassword() throws BadArgumentException, AlreadyTakenException, DataAccessException {
         userService.register(REGISTER_REQUEST);
         Assertions.assertThrows(UnauthorizedException.class, ()-> {
             LoginResult result = userService.login(new LoginRequest("ncannon", "password1"));
@@ -109,7 +109,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("Logout succeeds")
-    public void logoutSuccess() throws UnauthorizedException, BadArgumentException, AlreadyTakenException {
+    public void logoutSuccess() throws UnauthorizedException, BadArgumentException, AlreadyTakenException, DataAccessException {
         RegisterResult result = userService.register(REGISTER_REQUEST);
         String authToken = result.authToken();
         userService.logout(authToken);
@@ -118,7 +118,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("Logout fails with invalid token")
-    public void logoutFails() throws BadArgumentException, AlreadyTakenException {
+    public void logoutFails() throws BadArgumentException, AlreadyTakenException, DataAccessException {
         RegisterResult result = userService.register(REGISTER_REQUEST);
         String authToken = result.authToken().substring(0, 32) + "0000";
         Assertions.assertThrows(UnauthorizedException.class, () -> {

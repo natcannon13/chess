@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import dataaccess.DataAccessException;
 import io.javalin.*;
 import io.javalin.http.Context;
 import org.jetbrains.annotations.NotNull;
@@ -44,7 +45,10 @@ public class Server {
         } catch (BadArgumentException e){
             ctx.json(json.toJson(Map.of("message", e.getMessage())));
             ctx.status(400);
+        } catch (DataAccessException e){
+            //500
         }
+
     }
 
     private static void loginUser(@NotNull Context ctx){
@@ -60,6 +64,8 @@ public class Server {
         } catch (UnauthorizedException e){
             ctx.json(json.toJson(Map.of("message", e.getMessage())));
             ctx.status(401);
+        } catch (DataAccessException e){
+            //500
         }
     }
 
@@ -130,9 +136,13 @@ public class Server {
     private static void clearDb(@NotNull Context ctx) {
         var r = Map.of();
         var json = new Gson();
-        HANDLER.clear();
-        ctx.json(json.toJson(r));
-        ctx.status(200);
+        try {
+            HANDLER.clear();
+            ctx.json(json.toJson(r));
+            ctx.status(200);
+        } catch (DataAccessException e){
+            //500
+        }
     }
 
     public int run(int desiredPort) {

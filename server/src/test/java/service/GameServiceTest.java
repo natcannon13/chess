@@ -30,7 +30,7 @@ public class GameServiceTest {
     }
 
     @BeforeEach
-    public void clearData() {
+    public void clearData() throws DataAccessException {
         adminService.clear();
         authDAO.createAuth(new AuthData("1", "aaaaa"));
     }
@@ -107,7 +107,7 @@ public class GameServiceTest {
 
     @Test
     @DisplayName("Join Game fails when spot is taken")
-    public void joinGameAlreadyTaken() throws BadArgumentException, AlreadyTakenException {
+    public void joinGameAlreadyTaken() throws BadArgumentException, AlreadyTakenException, DataAccessException {
         authDAO.createAuth(new AuthData("2", "bbbbb"));
         int id = gameService.createGame("1", "testGame");
         gameService.joinGame("1", new GameJoinRequest("WHITE", id));

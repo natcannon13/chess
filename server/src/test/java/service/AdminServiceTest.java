@@ -23,7 +23,7 @@ public class AdminServiceTest{
 
     @Test
     @DisplayName("Clear")
-    public void clearSuccess(){
+    public void clearSuccess() throws DataAccessException {
         var auth = new AuthData("a", "b");
         var game = new GameData(1, "a", "b", "c", null);
         var user = new UserData("a", "b", "c");
