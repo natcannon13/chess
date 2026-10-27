@@ -10,7 +10,7 @@ public class SQLAuthDAO implements AuthDAO{
 
 
     public SQLAuthDAO() throws DataAccessException {
-        this.initialize();
+        initialize();
     }
 
     private void initialize() throws DataAccessException {

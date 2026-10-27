@@ -4,9 +4,9 @@ import model.UserData;
 
 public interface UserDAO {
 
-    void clear();
-    boolean isEmpty();
-    UserData createUser(UserData userData);
-    UserData getUser(String username);
+    void clear() throws DataAccessException;
+    boolean isEmpty() throws DataAccessException;
+    UserData createUser(UserData userData) throws DataAccessException;
+    UserData getUser(String username) throws DataAccessException;
 
 }
