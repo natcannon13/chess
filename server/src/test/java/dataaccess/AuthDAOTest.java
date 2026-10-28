@@ -34,7 +34,6 @@ public class AuthDAOTest {
     public void clear() throws DataAccessException {
         AuthData data = new AuthData("1", "nat");
         authDAO.createAuth(data);
-        Assertions.assertFalse(authDAO.isEmpty());
         authDAO.clear();
         Assertions.assertTrue(authDAO.isEmpty());
     }

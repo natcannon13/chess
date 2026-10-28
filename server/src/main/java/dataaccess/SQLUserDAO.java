@@ -5,6 +5,7 @@ import org.mindrot.jbcrypt.BCrypt;
 
 import javax.xml.crypto.Data;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class SQLUserDAO implements UserDAO {
 
@@ -15,7 +16,7 @@ public class SQLUserDAO implements UserDAO {
     private void initialize() throws DataAccessException {
         var statement = "CREATE TABLE IF NOT EXISTS user (" +
                 "username VARCHAR(255), " +
-                "password VARCHAR(255)" +
+                "password VARCHAR(255), " +
                 "email VARCHAR(255)" +
                 ")";
         try(var conn = DatabaseManager.getConnection()){
@@ -43,12 +44,33 @@ public class SQLUserDAO implements UserDAO {
 
     @Override
     public boolean isEmpty() throws DataAccessException {
-        return false;
+        var statement = "SELECT 1 FROM user LIMIT 1";
+        try(var conn = DatabaseManager.getConnection()){
+            try(var preparedStatement = conn.prepareStatement(statement)){
+                var rs = preparedStatement.executeQuery();
+                return(!rs.next());
+            }
+        }
+        catch(SQLException e){
+            throw new DataAccessException("Error: ");
+        }
     }
 
     @Override
     public UserData createUser(UserData userData) throws DataAccessException {
-        return null;
+        var statement = "INSERT INTO user VALUES (?, ?, ?)";
+        try(var conn = DatabaseManager.getConnection()){
+            try(var preparedStatement = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)){
+                preparedStatement.setString(1, userData.username());
+                preparedStatement.setString(2, userData.password());
+                preparedStatement.setString(3, userData.email());
+                preparedStatement.executeUpdate();
+                return new UserData(userData.username(), userData.password(), userData.email());
+            }
+        }
+        catch(SQLException e) {
+            throw new DataAccessException("Error: ");
+        }
     }
 
 
