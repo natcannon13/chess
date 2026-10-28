@@ -20,7 +20,7 @@ public class UserServiceTest {
     public static void init() throws DataAccessException {
         authDAO = new SQLAuthDAO();
         gameDAO = new MemoryGameDAO();
-        userDAO = new MemoryUserDAO();
+        userDAO = new SQLUserDAO();
         adminService = new AdminService(authDAO, gameDAO, userDAO);
         userService = new UserService(authDAO, userDAO);
     }

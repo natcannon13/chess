@@ -24,7 +24,7 @@ public class GameServiceTest {
     public static void init() throws DataAccessException {
         authDAO = new SQLAuthDAO();
         gameDAO = new MemoryGameDAO();
-        userDAO = new MemoryUserDAO();
+        userDAO = new SQLUserDAO();
         adminService = new AdminService(authDAO, gameDAO, userDAO);
         gameService = new GameService(authDAO, gameDAO);
     }
