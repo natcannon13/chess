@@ -22,8 +22,7 @@ public class SQLUserDAO implements UserDAO {
             try(var preparedStatement = conn.prepareStatement(statement)){
                 preparedStatement.executeUpdate();
             }
-        }
-        catch(SQLException e){
+        } catch(SQLException | DataAccessException e){
             throw new DataAccessException("Error: internal server error");
         }
     }
@@ -35,8 +34,7 @@ public class SQLUserDAO implements UserDAO {
             try(var preparedStatement = conn.prepareStatement(statement)){
                 preparedStatement.executeUpdate();
             }
-        }
-        catch(SQLException e){
+        } catch(SQLException | DataAccessException e){
             throw new DataAccessException("Error: internal server error");
         }
     }
@@ -49,8 +47,7 @@ public class SQLUserDAO implements UserDAO {
                 var rs = preparedStatement.executeQuery();
                 return(!rs.next());
             }
-        }
-        catch(SQLException e){
+        } catch(SQLException | DataAccessException e){
             throw new DataAccessException("Error: internal server error");
         }
     }
@@ -66,8 +63,7 @@ public class SQLUserDAO implements UserDAO {
                 preparedStatement.executeUpdate();
                 return new UserData(userData.username(), userData.password(), userData.email());
             }
-        }
-        catch(SQLException e) {
+        } catch(SQLException | DataAccessException e){
             throw new DataAccessException("Error: internal server error");
         }
     }
@@ -89,7 +85,7 @@ public class SQLUserDAO implements UserDAO {
                 }
                 return null;
             }
-        } catch(SQLException e) {
+        } catch(SQLException | DataAccessException e){
             throw new DataAccessException("Error: internal server error");
         }
     }

@@ -24,7 +24,7 @@ public class SQLAuthDAO implements AuthDAO {
                 preparedStatement.executeUpdate();
             }
         }
-        catch(SQLException e){
+        catch(SQLException | DataAccessException e){
             throw new DataAccessException("Error: internal server error");
         }
     }
@@ -37,7 +37,7 @@ public class SQLAuthDAO implements AuthDAO {
                 preparedStatement.executeUpdate();
             }
         }
-        catch(SQLException e){
+        catch(SQLException | DataAccessException e){
             throw new DataAccessException("Error: internal server error");
         }
     }
@@ -51,7 +51,7 @@ public class SQLAuthDAO implements AuthDAO {
                 return(!rs.next());
             }
         }
-        catch(SQLException e){
+        catch(SQLException | DataAccessException e){
             throw new DataAccessException("Error: internal server error");
         }
     }
@@ -66,7 +66,7 @@ public class SQLAuthDAO implements AuthDAO {
                 preparedStatement.executeUpdate();
             }
         }
-        catch(SQLException e){
+        catch(SQLException | DataAccessException e){
             throw new DataAccessException("Error: internal server error");
         }
     }
@@ -86,7 +86,7 @@ public class SQLAuthDAO implements AuthDAO {
                 return null;
             }
         }
-        catch(SQLException e){
+        catch(SQLException | DataAccessException e){
             throw new DataAccessException("Error: internal server error");
         }
     }
@@ -100,7 +100,7 @@ public class SQLAuthDAO implements AuthDAO {
                 var rs = preparedStatement.executeUpdate();
             }
         }
-        catch(SQLException e){
+        catch(SQLException | DataAccessException e){
             throw new DataAccessException("Error: internal server error");
         }
     }

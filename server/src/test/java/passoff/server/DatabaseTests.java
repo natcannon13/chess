@@ -168,7 +168,7 @@ public class DatabaseTests {
                     String value = rs.getString(i);
                     if (value != null){
                         Assertions.assertFalse(value.contains(TEST_USER.getPassword()),
-                            "Found clear text password in database");
+                                "Found clear text password in database");
                     }
                 }
             }
@@ -209,14 +209,14 @@ public class DatabaseTests {
 
         for (Package p : getClass().getClassLoader().getDefinedPackages()) {
             try {
-                Class<?> clazz = Class.forName(p.getName() + ".dataaccess.sql.DatabaseManager");
+                Class<?> clazz = Class.forName(p.getName() + ".DatabaseManager");
                 clazz.getDeclaredMethod("getConnection");
                 databaseManagerClass = clazz;
                 return clazz;
             } catch (ReflectiveOperationException ignored) {}
         }
         throw new ClassNotFoundException("Unable to load database in order to verify persistence. " +
-                "Are you using dataaccess.sql.DatabaseManager to set your credentials? " +
+                "Are you using DatabaseManager to set your credentials? " +
                 "Did you edit the signature of the getConnection method?");
     }
 

@@ -33,7 +33,7 @@ public class SQLGameDAO implements GameDAO {
                 preparedStatement.executeUpdate();
             }
         }
-        catch(SQLException e){
+        catch(SQLException | DataAccessException e){
             throw new DataAccessException("Error: internal server error");
         }
     }
@@ -46,7 +46,7 @@ public class SQLGameDAO implements GameDAO {
                 preparedStatement.executeUpdate();
             }
         }
-        catch(SQLException e){
+        catch(SQLException | DataAccessException e){
             throw new DataAccessException("Error: internal server error");
         }
     }
@@ -60,7 +60,7 @@ public class SQLGameDAO implements GameDAO {
                 return(!rs.next());
             }
         }
-        catch(SQLException e){
+        catch(SQLException | DataAccessException e){
             throw new DataAccessException("Error: internal server error");
         }
     }
@@ -77,7 +77,7 @@ public class SQLGameDAO implements GameDAO {
                 preparedStatement.setString(5, serialize(gameData.game()));
                 preparedStatement.executeUpdate();
             }
-        } catch (SQLException e) {
+        } catch(SQLException | DataAccessException e){
             throw new DataAccessException("Error: internal server error");
         }
         return gameData;
@@ -100,7 +100,7 @@ public class SQLGameDAO implements GameDAO {
                 }
                 return null;
             }
-        } catch(SQLException e){
+        } catch(SQLException | DataAccessException e){
             throw new DataAccessException("Error: internal server error");
         }
     }
@@ -122,8 +122,7 @@ public class SQLGameDAO implements GameDAO {
                 }
             }
             return gameList;
-        }
-        catch (SQLException e){
+        } catch(SQLException | DataAccessException e){
             throw new DataAccessException("Error: internal server error");
         }
     }
@@ -139,7 +138,7 @@ public class SQLGameDAO implements GameDAO {
                 preparedStatement.setInt(4, newInfo.gameID());
                 preparedStatement.executeUpdate();
             }
-        } catch (SQLException e){
+        } catch(SQLException | DataAccessException e){
             throw new DataAccessException("Error: internal server error");
         }
     }
