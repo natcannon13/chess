@@ -2,9 +2,9 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.*;
-import dataaccess.sql.SQLAuthDAO;
-import dataaccess.sql.SQLGameDAO;
-import dataaccess.sql.SQLUserDAO;
+import dataaccess.SQLAuthDAO;
+import dataaccess.SQLGameDAO;
+import dataaccess.SQLUserDAO;
 import model.GameData;
 import server.models.*;
 import service.*;
@@ -22,6 +22,7 @@ public class Handler {
     private final UserDAO userDAO;
 
     public Handler() throws DataAccessException{
+        DatabaseManager.createDatabase();
         userDAO = new SQLUserDAO();
         gameDAO = new SQLGameDAO();
         authDAO = new SQLAuthDAO();
