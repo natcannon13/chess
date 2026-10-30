@@ -1,5 +1,7 @@
-package dataaccess;
+package dataaccess.sql;
 
+import dataaccess.DataAccessException;
+import dataaccess.UserDAO;
 import model.UserData;
 import java.sql.SQLException;
 import java.sql.Statement;

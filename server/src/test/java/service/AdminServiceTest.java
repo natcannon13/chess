@@ -1,9 +1,9 @@
 package service;
 
 import dataaccess.*;
-import dataaccess.SQLAuthDAO;
-import dataaccess.SQLGameDAO;
-import dataaccess.SQLUserDAO;
+import dataaccess.sql.SQLAuthDAO;
+import dataaccess.sql.SQLGameDAO;
+import dataaccess.sql.SQLUserDAO;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
