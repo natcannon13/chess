@@ -21,9 +21,9 @@ public class UserServiceTest {
 
     @BeforeAll
     public static void init() throws DataAccessException {
+        userDAO = new SQLUserDAO();
         authDAO = new SQLAuthDAO();
         gameDAO = new SQLGameDAO();
-        userDAO = new SQLUserDAO();
         adminService = new AdminService(authDAO, gameDAO, userDAO);
         userService = new UserService(authDAO, userDAO);
     }

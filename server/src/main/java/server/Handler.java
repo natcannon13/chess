@@ -2,6 +2,9 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.*;
+import dataaccess.sql.SQLAuthDAO;
+import dataaccess.sql.SQLGameDAO;
+import dataaccess.sql.SQLUserDAO;
 import model.GameData;
 import server.models.*;
 import service.*;
@@ -18,10 +21,10 @@ public class Handler {
     private final GameDAO gameDAO;
     private final UserDAO userDAO;
 
-    public Handler(){
-        userDAO = new MemoryUserDAO();
-        gameDAO = new MemoryGameDAO();
-        authDAO = new MemoryAuthDAO();
+    public Handler() throws DataAccessException{
+        userDAO = new SQLUserDAO();
+        gameDAO = new SQLGameDAO();
+        authDAO = new SQLAuthDAO();
         adminService = new AdminService(authDAO, gameDAO, userDAO);
         userService = new UserService(authDAO, userDAO);
         gameService = new GameService(authDAO, gameDAO);
@@ -57,7 +60,8 @@ public class Handler {
         return gameService.createGame(authToken, name.gameName());
     }
 
-    public void joinGame(String authToken, String joinInfo) throws UnauthorizedException, BadArgumentException, AlreadyTakenException, DataAccessException {
+    public void joinGame(String authToken, String joinInfo) throws UnauthorizedException, BadArgumentException,
+            AlreadyTakenException, DataAccessException {
         var json = new Gson();
         GameJoinRequest request = json.fromJson(joinInfo, GameJoinRequest.class);
         gameService.joinGame(authToken, request);

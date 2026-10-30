@@ -32,7 +32,8 @@ public class GameService {
         return gameID;
     }
 
-    public void joinGame(String authToken, GameJoinRequest request) throws BadArgumentException, UnauthorizedException, AlreadyTakenException, DataAccessException {
+    public void joinGame(String authToken, GameJoinRequest request) throws BadArgumentException, UnauthorizedException,
+            AlreadyTakenException, DataAccessException {
         AuthData authData = authDAO.getAuth(authToken);
         if(authData == null){
             throw new UnauthorizedException("Error: unauthorized");

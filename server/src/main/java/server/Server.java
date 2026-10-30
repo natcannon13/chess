@@ -16,7 +16,15 @@ import java.util.Map;
 public class Server {
 
     private final Javalin javalin;
-    private static final Handler HANDLER = new Handler();
+    private static final Handler HANDLER;
+
+    static {
+        try {
+            HANDLER = new Handler();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
