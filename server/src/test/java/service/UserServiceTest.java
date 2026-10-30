@@ -1,9 +1,9 @@
 package service;
 
 import dataaccess.*;
-import dataaccess.SQLAuthDAO;
-import dataaccess.SQLGameDAO;
-import dataaccess.SQLUserDAO;
+import dataaccess.sql.SQLAuthDAO;
+import dataaccess.sql.SQLGameDAO;
+import dataaccess.sql.SQLUserDAO;
 import org.junit.jupiter.api.*;
 import server.models.LoginRequest;
 import server.models.LoginResult;
