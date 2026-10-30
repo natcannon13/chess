@@ -2,9 +2,9 @@ package dataaccess.sql;
 
 import chess.ChessGame;
 import dataaccess.DataAccessException;
-import dataaccess.GameDAO;
 import model.GameData;
 import org.junit.jupiter.api.*;
+
 
 public class GameDAOTest {
 
@@ -37,6 +37,27 @@ public class GameDAOTest {
         ChessGame deserialized = gameDAO.deserialize(serialized);
         System.out.println(serialized);
         Assertions.assertEquals(game, deserialized);
+    }
+
+    @Test
+    @DisplayName("isEmpty returns true when no games exist")
+    public void isEmptyWhenEmpty() throws DataAccessException {
+        Assertions.assertTrue(gameDAO.isEmpty());
+    }
+
+    @Test
+    @DisplayName("isEmpty returns false when games exist")
+    public void isNotEmptyWhenNotEmpty() throws DataAccessException{
+        gameDAO.createGame(new GameData(1, "nat", "nat2", "game", new ChessGame()));
+        Assertions.assertFalse(gameDAO.isEmpty());
+    }
+
+    @Test
+    @DisplayName("Clear works")
+    public void clear() throws DataAccessException{
+        gameDAO.createGame(new GameData(1, "nat", "nat2", "game", new ChessGame()));
+        gameDAO.clear();
+        Assertions.assertTrue(gameDAO.isEmpty());
     }
 
 }

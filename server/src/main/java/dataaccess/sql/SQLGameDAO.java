@@ -12,6 +12,7 @@ import dataaccess.GameDAO;
 import model.GameData;
 
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 
 public class SQLGameDAO implements GameDAO {
@@ -67,7 +68,20 @@ public class SQLGameDAO implements GameDAO {
 
     @Override
     public GameData createGame(GameData gameData) throws DataAccessException{
-        return null;
+        var statement = "INSERT INTO game VALUES (?, ?, ?, ?, ?)";
+        try(var conn = DatabaseManager.getConnection()){
+            try(var preparedStatement = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)){
+                preparedStatement.setInt(1, gameData.gameID());
+                preparedStatement.setString(2, gameData.whiteUsername());
+                preparedStatement.setString(3, gameData.blackUsername());
+                preparedStatement.setString(4, gameData.gameName());
+                preparedStatement.setString(5, serialize(gameData.game()));
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Error: ");
+        }
+        return gameData;
     }
 
     @Override
