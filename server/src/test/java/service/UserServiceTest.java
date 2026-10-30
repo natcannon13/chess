@@ -2,6 +2,7 @@ package service;
 
 import dataaccess.*;
 import dataaccess.sql.SQLAuthDAO;
+import dataaccess.sql.SQLGameDAO;
 import dataaccess.sql.SQLUserDAO;
 import org.junit.jupiter.api.*;
 import server.models.LoginRequest;
@@ -21,7 +22,7 @@ public class UserServiceTest {
     @BeforeAll
     public static void init() throws DataAccessException {
         authDAO = new SQLAuthDAO();
-        gameDAO = new MemoryGameDAO();
+        gameDAO = new SQLGameDAO();
         userDAO = new SQLUserDAO();
         adminService = new AdminService(authDAO, gameDAO, userDAO);
         userService = new UserService(authDAO, userDAO);

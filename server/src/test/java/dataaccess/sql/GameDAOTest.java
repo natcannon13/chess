@@ -38,7 +38,6 @@ public class GameDAOTest {
         ChessGame game = new ChessGame();
         String serialized = gameDAO.serialize(game);
         ChessGame deserialized = gameDAO.deserialize(serialized);
-        System.out.println(serialized);
         Assertions.assertEquals(game, deserialized);
     }
 
@@ -94,6 +93,17 @@ public class GameDAOTest {
         List<GameData> gameList = gameDAO.listGames();
         Assertions.assertTrue(gameList.contains(gameData));
         Assertions.assertTrue(gameList.contains(gameData2));
+    }
+
+    @Test
+    @DisplayName("Update updates game")
+    public void updateGame() throws DataAccessException{
+        GameData gameData = new GameData(1, "nat", "nat2", "game", new ChessGame());
+        GameData gameData2 = new GameData(1, "nat2", "nat3", "game", new ChessGame());
+        gameDAO.createGame(gameData);
+        gameDAO.updateGame(gameData2);
+        GameData updatedData = gameDAO.getGame(1);
+        Assertions.assertEquals(gameData2, updatedData);
     }
 
 }

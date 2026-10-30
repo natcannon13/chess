@@ -2,6 +2,7 @@ package service;
 
 import dataaccess.*;
 import dataaccess.sql.SQLAuthDAO;
+import dataaccess.sql.SQLGameDAO;
 import dataaccess.sql.SQLUserDAO;
 import model.AuthData;
 import model.GameData;
@@ -18,7 +19,7 @@ public class AdminServiceTest{
     @BeforeAll
     public static void init() throws DataAccessException {
         authDAO = new SQLAuthDAO();
-        gameDAO = new MemoryGameDAO();
+        gameDAO = new SQLGameDAO();
         userDAO = new SQLUserDAO();
         adminService = new AdminService(authDAO, gameDAO, userDAO);
     }

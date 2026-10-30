@@ -133,7 +133,18 @@ public class SQLGameDAO implements GameDAO {
 
     @Override
     public void updateGame(GameData newInfo) throws DataAccessException{
-
+        var statement = "UPDATE game SET whiteUsername = ?, blackUsername = ?, game = ? WHERE gameID = ?";
+        try(var conn = DatabaseManager.getConnection()){
+            try(var preparedStatement = conn.prepareStatement(statement)){
+                preparedStatement.setString(1, newInfo.whiteUsername());
+                preparedStatement.setString(2, newInfo.blackUsername());
+                preparedStatement.setString(3, serialize(newInfo.game()));
+                preparedStatement.setInt(4, newInfo.gameID());
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e){
+            throw new DataAccessException("Error: internal server error");
+        }
     }
 
     public ChessGame deserialize(String gameJson){
