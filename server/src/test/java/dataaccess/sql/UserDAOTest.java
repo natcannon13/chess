@@ -1,16 +1,16 @@
-package dataaccess;
+package dataaccess.sql;
 
+import dataaccess.DataAccessException;
+import dataaccess.UserDAO;
 import model.UserData;
 import org.junit.jupiter.api.*;
-
-import javax.xml.crypto.Data;
 
 public class UserDAOTest {
 
     private static UserDAO userDAO;
 
     @BeforeAll
-    public static void init() throws DataAccessException{
+    public static void init() throws DataAccessException {
         DatabaseManager.createDatabase();
         userDAO = new SQLUserDAO();
     }
@@ -61,6 +61,13 @@ public class UserDAOTest {
         Assertions.assertEquals("nat2", userData2.username());
         Assertions.assertEquals("12504", userData2.password());
         Assertions.assertEquals("ncannon@example.com", userData2.email());
+    }
+
+    @Test
+    @DisplayName("Get Nonexistent User returns null")
+    public void getNoUser() throws DataAccessException{
+        var userData = userDAO.getUser("nat");
+        Assertions.assertNull(userData);
     }
 
 }

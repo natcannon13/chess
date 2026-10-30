@@ -1,23 +1,23 @@
-package dataaccess;
+package dataaccess.sql;
 
-import model.UserData;
-import org.mindrot.jbcrypt.BCrypt;
+import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
+import model.AuthData;
 
-import javax.xml.crypto.Data;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class SQLUserDAO implements UserDAO {
+public class SQLAuthDAO implements AuthDAO {
 
-    public SQLUserDAO() throws DataAccessException {
+
+    public SQLAuthDAO() throws DataAccessException {
         initialize();
     }
 
     private void initialize() throws DataAccessException {
-        var statement = "CREATE TABLE IF NOT EXISTS user (" +
-                "username VARCHAR(255), " +
-                "password VARCHAR(255), " +
-                "email VARCHAR(255)" +
+        var statement = "CREATE TABLE IF NOT EXISTS auth (" +
+                "authToken VARCHAR(255), " +
+                "username VARCHAR(255)" +
                 ")";
         try(var conn = DatabaseManager.getConnection()){
             try(var preparedStatement = conn.prepareStatement(statement)){
@@ -31,7 +31,7 @@ public class SQLUserDAO implements UserDAO {
 
     @Override
     public void clear() throws DataAccessException {
-        var statement = "TRUNCATE TABLE user";
+        var statement = "TRUNCATE TABLE auth";
         try(var conn = DatabaseManager.getConnection()){
             try(var preparedStatement = conn.prepareStatement(statement)){
                 preparedStatement.executeUpdate();
@@ -43,8 +43,8 @@ public class SQLUserDAO implements UserDAO {
     }
 
     @Override
-    public boolean isEmpty() throws DataAccessException {
-        var statement = "SELECT 1 FROM user LIMIT 1";
+    public boolean isEmpty() throws DataAccessException{
+        var statement = "SELECT 1 FROM auth LIMIT 1";
         try(var conn = DatabaseManager.getConnection()){
             try(var preparedStatement = conn.prepareStatement(statement)){
                 var rs = preparedStatement.executeQuery();
@@ -57,40 +57,50 @@ public class SQLUserDAO implements UserDAO {
     }
 
     @Override
-    public UserData createUser(UserData userData) throws DataAccessException {
-        var statement = "INSERT INTO user VALUES (?, ?, ?)";
+    public void createAuth(AuthData authData) throws DataAccessException {
+        var statement = "INSERT INTO auth VALUES (?, ?)";
         try(var conn = DatabaseManager.getConnection()){
             try(var preparedStatement = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)){
-                preparedStatement.setString(1, userData.username());
-                preparedStatement.setString(2, userData.password());
-                preparedStatement.setString(3, userData.email());
+                preparedStatement.setString(1, authData.authToken());
+                preparedStatement.setString(2, authData.username());
                 preparedStatement.executeUpdate();
-                return new UserData(userData.username(), userData.password(), userData.email());
             }
         }
-        catch(SQLException e) {
+        catch(SQLException e){
             throw new DataAccessException("Error: ");
         }
     }
 
-
-
     @Override
-    public UserData getUser(String username) throws DataAccessException {
-        var statement = "SELECT * FROM user WHERE username=?";
+    public AuthData getAuth(String authToken) throws DataAccessException {
+        var statement = "SELECT * FROM auth WHERE authToken=?";
         try(var conn = DatabaseManager.getConnection()){
             try(var preparedStatement = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)){
-                preparedStatement.setString(1, username);
+                preparedStatement.setString(1, authToken);
                 var rs = preparedStatement.executeQuery();
                 if(rs.next()){
-                    String name = rs.getString("username");
-                    String password = rs.getString("password");
-                    String email = rs.getString("email");
-                    return new UserData(name, password, email);
+                    String token = rs.getString("authToken");
+                    String username = rs.getString("username");
+                    return new AuthData(token, username);
                 }
                 return null;
             }
-        } catch(SQLException e) {
+        }
+        catch(SQLException e){
+            throw new DataAccessException("Error: ");
+        }
+    }
+
+    @Override
+    public void deleteAuth(String authToken) throws DataAccessException {
+        var statement = "DELETE FROM auth WHERE authToken=?";
+        try(var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)) {
+                preparedStatement.setString(1, authToken);
+                var rs = preparedStatement.executeUpdate();
+            }
+        }
+        catch(SQLException e){
             throw new DataAccessException("Error: ");
         }
     }

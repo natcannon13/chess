@@ -1,4 +1,6 @@
-package dataaccess;
+package dataaccess.sql;
+
+import dataaccess.DataAccessException;
 
 import java.sql.*;
 import java.util.Properties;
@@ -36,7 +38,7 @@ public class DatabaseManager {
      * The easiest way to do that is with a try-with-resource block.
      * <br/>
      * <code>
-     * try (var conn = dataaccess.DatabaseManager.getConnection()) {
+     * try (var conn = dataaccess.sql.DatabaseManager.getConnection()) {
      * // execute SQL statements.
      * }
      * </code>

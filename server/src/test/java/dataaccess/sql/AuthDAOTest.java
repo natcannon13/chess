@@ -1,5 +1,7 @@
-package dataaccess;
+package dataaccess.sql;
 
+import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import model.AuthData;
 import org.junit.jupiter.api.*;
 
@@ -44,6 +46,13 @@ public class AuthDAOTest {
         AuthData data = new AuthData("1", "nat");
         authDAO.deleteAuth("1");
         Assertions.assertNull(authDAO.getAuth("1"));
+    }
+
+    @Test
+    @DisplayName("Get nothing when doesn't exist")
+    public void getNothing() throws DataAccessException{
+        authDAO.getAuth("4");
+        Assertions.assertNull(authDAO.getAuth("4"));
     }
 
 }

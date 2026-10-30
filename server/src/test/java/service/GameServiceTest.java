@@ -1,14 +1,14 @@
 package service;
 
 import dataaccess.*;
+import dataaccess.sql.SQLAuthDAO;
+import dataaccess.sql.SQLUserDAO;
 import model.AuthData;
 import model.GameData;
 import org.junit.jupiter.api.*;
 import server.models.GameJoinRequest;
 import server.models.RegisterRequest;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class GameServiceTest {
