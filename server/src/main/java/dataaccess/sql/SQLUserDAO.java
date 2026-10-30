@@ -24,7 +24,7 @@ public class SQLUserDAO implements UserDAO {
             }
         }
         catch(SQLException e){
-            throw new DataAccessException("Error: ");
+            throw new DataAccessException("Error: internal server error");
         }
     }
 
@@ -37,7 +37,7 @@ public class SQLUserDAO implements UserDAO {
             }
         }
         catch(SQLException e){
-            throw new DataAccessException("Error: ");
+            throw new DataAccessException("Error: internal server error");
         }
     }
 
@@ -51,7 +51,7 @@ public class SQLUserDAO implements UserDAO {
             }
         }
         catch(SQLException e){
-            throw new DataAccessException("Error: ");
+            throw new DataAccessException("Error: internal server error");
         }
     }
 
@@ -68,7 +68,7 @@ public class SQLUserDAO implements UserDAO {
             }
         }
         catch(SQLException e) {
-            throw new DataAccessException("Error: ");
+            throw new DataAccessException("Error: internal server error");
         }
     }
 
@@ -90,7 +90,7 @@ public class SQLUserDAO implements UserDAO {
                 return null;
             }
         } catch(SQLException e) {
-            throw new DataAccessException("Error: ");
+            throw new DataAccessException("Error: internal server error");
         }
     }
 }

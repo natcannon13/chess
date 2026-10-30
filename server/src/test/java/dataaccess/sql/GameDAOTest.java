@@ -6,6 +6,7 @@ import model.GameData;
 import org.junit.jupiter.api.*;
 
 import javax.xml.crypto.Data;
+import java.util.List;
 
 
 public class GameDAOTest {
@@ -75,6 +76,24 @@ public class GameDAOTest {
     @DisplayName("Fail to get game that doesn't exist")
     public void getInvalidGame() throws DataAccessException{
         Assertions.assertNull(gameDAO.getGame(1));
+    }
+
+    @Test
+    @DisplayName("List is empty when no games")
+    public void emptyList() throws DataAccessException{
+        Assertions.assertTrue(gameDAO.listGames().isEmpty());
+    }
+
+    @Test
+    @DisplayName("List returns list of games")
+    public void gameList() throws DataAccessException{
+        GameData gameData = new GameData(1, "nat", "nat2", "game", new ChessGame());
+        GameData gameData2 = new GameData(2, "nat", "nat2", "game", new ChessGame());
+        gameDAO.createGame(gameData);
+        gameDAO.createGame(gameData2);
+        List<GameData> gameList = gameDAO.listGames();
+        Assertions.assertTrue(gameList.contains(gameData));
+        Assertions.assertTrue(gameList.contains(gameData2));
     }
 
 }

@@ -14,6 +14,7 @@ import model.GameData;
 import javax.xml.crypto.Data;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SQLGameDAO implements GameDAO {
@@ -109,7 +110,25 @@ public class SQLGameDAO implements GameDAO {
 
     @Override
     public List<GameData> listGames() throws DataAccessException{
-        return List.of();
+        List<GameData> gameList = new ArrayList<>();
+        var statement = "SELECT * FROM game";
+        try(var conn = DatabaseManager.getConnection()){
+            try(var preparedStatement = conn.prepareStatement(statement)){
+                var rs = preparedStatement.executeQuery();
+                while(rs.next()){
+                    int gameID = rs.getInt("gameID");
+                    String whiteUsername = rs.getString("whiteUsername");
+                    String blackUsername = rs.getString("blackUsername");
+                    String gameName = rs.getString("gameName");
+                    ChessGame game = deserialize(rs.getString("game"));
+                    gameList.add(new GameData(gameID, whiteUsername, blackUsername, gameName, game));
+                }
+            }
+            return gameList;
+        }
+        catch (SQLException e){
+            throw new DataAccessException("Error: internal server error");
+        }
     }
 
     @Override
