@@ -11,6 +11,7 @@ import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import model.GameData;
 
+import javax.xml.crypto.Data;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
@@ -35,7 +36,7 @@ public class SQLGameDAO implements GameDAO {
             }
         }
         catch(SQLException e){
-            throw new DataAccessException("Error: ");
+            throw new DataAccessException("Error: internal server error");
         }
     }
 
@@ -48,7 +49,7 @@ public class SQLGameDAO implements GameDAO {
             }
         }
         catch(SQLException e){
-            throw new DataAccessException("Error: ");
+            throw new DataAccessException("Error: internal server error");
         }
     }
 
@@ -62,7 +63,7 @@ public class SQLGameDAO implements GameDAO {
             }
         }
         catch(SQLException e){
-            throw new DataAccessException("Error: ");
+            throw new DataAccessException("Error: internal server error");
         }
     }
 
@@ -79,14 +80,31 @@ public class SQLGameDAO implements GameDAO {
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Error: ");
+            throw new DataAccessException("Error: internal server error");
         }
         return gameData;
     }
 
     @Override
     public GameData getGame(int id) throws DataAccessException{
-        return null;
+        var statement = "SELECT * FROM game WHERE gameID=?";
+        try(var conn = DatabaseManager.getConnection()){
+            try(var preparedStatement = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)){
+                preparedStatement.setInt(1, id);
+                var rs = preparedStatement.executeQuery();
+                if(rs.next()){
+                    int gameID = rs.getInt("gameID");
+                    String whiteUsername = rs.getString("whiteUsername");
+                    String blackUsername = rs.getString("blackUsername");
+                    String gameName = rs.getString("gameName");
+                    ChessGame game = deserialize(rs.getString("game"));
+                    return new GameData(gameID, whiteUsername, blackUsername, gameName, game);
+                }
+                return null;
+            }
+        } catch(SQLException e){
+            throw new DataAccessException("Error: internal server error");
+        }
     }
 
     @Override
