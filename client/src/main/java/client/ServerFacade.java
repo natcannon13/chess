@@ -1,8 +1,6 @@
 package client;
 
 import com.google.gson.Gson;
-import exceptions.AlreadyTakenException;
-import exceptions.BadArgumentException;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -44,6 +42,45 @@ public class ServerFacade {
         if(response.statusCode() == 200){
             this.authToken = responseBody.get("authToken").toString();
             return responseBody.get("username").toString();
+        }
+        else{
+            throw new Exception(responseBody.get("message").toString());
+        }
+    }
+
+    public String login(String username, String password) throws Exception{
+        String urlString = serverURL + "/session";
+        var body = Map.of("username", username, "password", password);
+        var json = new Gson().toJson(body);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(new URI(urlString))
+                .timeout(java.time.Duration.ofMillis(5000))
+                .POST(HttpRequest.BodyPublishers.ofString(json))
+                .build();
+        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        var responseBody = new Gson().fromJson(response.body(), Map.class);
+        if(response.statusCode() == 200){
+            this.authToken = responseBody.get("authToken").toString();
+            return responseBody.get("username").toString();
+        }
+        else{
+            throw new Exception(responseBody.get("message").toString());
+        }
+    }
+
+    public void logout() throws Exception{
+        String urlString = serverURL + "/session";
+        var json = new Gson().toJson(Map.of());
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(new URI(urlString))
+                .timeout(java.time.Duration.ofMillis(5000))
+                .header("authorization", authToken)
+                .DELETE()
+                .build();
+        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        var responseBody = new Gson().fromJson(response.body(), Map.class);
+        if(response.statusCode() == 200){
+            this.authToken = null;
         }
         else{
             throw new Exception(responseBody.get("message").toString());

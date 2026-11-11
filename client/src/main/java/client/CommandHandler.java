@@ -19,16 +19,37 @@ public class CommandHandler {
             case "register":
                 return register(Arrays.copyOfRange(splitCommand, 1, splitCommand.length));
             case "login":
-                return Repl.State.SIGNED_IN;
+                return login(Arrays.copyOfRange(splitCommand, 1, splitCommand.length));
             case "quit":
                 return Repl.State.QUIT;
             default:
+                ConsoleOutput.invalidCommand();
                 return Repl.State.SIGNED_OUT;
         }
     }
 
     public Repl.State handlePostLogin(String commandInput){
-        return Repl.State.QUIT;
+        String[] splitCommand = split(commandInput);
+        switch (splitCommand[0]){
+            case "help":
+                ConsoleOutput.helpPostLogin();
+                return Repl.State.SIGNED_IN;
+            case "create":
+                return Repl.State.SIGNED_IN;
+            case "list":
+                return Repl.State.SIGNED_IN;
+            case "join":
+                return Repl.State.SIGNED_IN;
+            case "observe":
+                return Repl.State.SIGNED_IN;
+            case "logout":
+                return Repl.State.SIGNED_OUT;
+            case "quit":
+                return Repl.State.QUIT;
+            default:
+                ConsoleOutput.invalidCommand();
+                return Repl.State.SIGNED_IN;
+        }
     }
 
     private String[] split(String input){
@@ -46,6 +67,21 @@ public class CommandHandler {
             ConsoleOutput.printLogin(username);
             return Repl.State.SIGNED_IN;
         } catch(Exception e){
+            ConsoleOutput.printError(e.getMessage());
+            return Repl.State.SIGNED_OUT;
+        }
+    }
+
+    private Repl.State login(String[] args){
+        if(args.length != 2){
+            ConsoleOutput.printArgumentError();
+            return Repl.State.SIGNED_OUT;
+        }
+        try{
+            String username = serverFacade.login(args[0], args[1]);
+            ConsoleOutput.printLogin(username);
+            return Repl.State.SIGNED_IN;
+        } catch (Exception e) {
             ConsoleOutput.printError(e.getMessage());
             return Repl.State.SIGNED_OUT;
         }

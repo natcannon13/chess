@@ -51,4 +51,42 @@ public class ServerFacadeTests {
         });
     }
 
+    @Test
+    @DisplayName("Logout")
+    public void logout() throws Exception{
+        facade.register("nat", "password", "nat@example.com");
+        Assertions.assertDoesNotThrow( () -> {
+            facade.logout();
+        });
+    }
+
+    @Test
+    @DisplayName("Logout fails when not logged in")
+    public void logoutTwice() throws Exception{
+        facade.register("nat", "password", "nat@example.com");
+        facade.logout();
+        Assertions.assertThrows(Exception.class, () -> {
+            facade.logout();
+        });
+    }
+
+    @Test
+    @DisplayName("Logout")
+    public void login() throws Exception{
+        facade.register("nat", "password", "nat@example.com");
+        facade.logout();
+        String username = facade.login("nat", "password");
+        Assertions.assertEquals("nat", username);
+    }
+
+    @Test
+    @DisplayName("Login fails when bad password")
+    public void loginBadPassword() throws Exception{
+        facade.register("nat", "password", "nat@example.com");
+        facade.logout();
+        Assertions.assertThrows(Exception.class, () -> {
+            facade.login("nat", "password2");
+        });
+    }
+
 }
