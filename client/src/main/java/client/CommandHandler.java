@@ -43,7 +43,7 @@ public class CommandHandler {
             case "observe":
                 return Repl.State.SIGNED_IN;
             case "logout":
-                return Repl.State.SIGNED_OUT;
+                return logout();
             case "quit":
                 return Repl.State.QUIT;
             default:
@@ -84,6 +84,17 @@ public class CommandHandler {
         } catch (Exception e) {
             ConsoleOutput.printError(e.getMessage());
             return Repl.State.SIGNED_OUT;
+        }
+    }
+
+    private Repl.State logout(){
+        try{
+            serverFacade.logout();
+            ConsoleOutput.printLogout();
+            return Repl.State.SIGNED_OUT;
+        } catch (Exception e) {
+            ConsoleOutput.printError(e.getMessage());
+            return Repl.State.SIGNED_IN;
         }
     }
 }

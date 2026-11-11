@@ -85,4 +85,9 @@ public class ConsoleOutput {
         System.out.println("Error: Invalid arguments. Run help to see command usage.");
     }
 
+    public static void printLogout(){
+        System.out.print(EscapeSequences.SET_TEXT_COLOR_GREEN);
+        System.out.println("Logged out successfully.");
+    }
+
 }
