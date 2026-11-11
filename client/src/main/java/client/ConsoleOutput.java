@@ -12,7 +12,7 @@ public class ConsoleOutput {
                 "help"
         };
         String[] descriptions = {
-                " - Creates an account",
+                " - creates an account",
                 " - logs in to an existing account",
                 " - exits the program",
                 " - displays this menu"
@@ -28,14 +28,20 @@ public class ConsoleOutput {
 
     public static void helpPostLogin(){
         String[] commands = {
-                "register <USERNAME> <PASSWORD> <EMAIL>",
-                "login <USERNAME> <PASSWORD>",
+                "create <NAME>",
+                "list",
+                "join <ID> [WHITE|BLACK]",
+                "observe <ID>",
+                "logout",
                 "quit",
                 "help"
         };
         String[] descriptions = {
-                " - Creates an account",
-                " - logs in to an existing account",
+                " - creates a new game",
+                " - lists existing games",
+                " - joins a game as a player",
+                " - joins a game as an observer",
+                " - logs out",
                 " - exits the program",
                 " - displays this menu"
         };
@@ -52,6 +58,31 @@ public class ConsoleOutput {
         System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
         System.out.print("[" + state.toString() + "] >>> ");
         System.out.print(EscapeSequences.SET_TEXT_COLOR_GREEN);
+    }
+
+    public static void invalidCommand(){
+        System.out.print(EscapeSequences.SET_TEXT_COLOR_RED);
+        System.out.println("Error: Invalid command. Run help to see a list of commands.");
+    }
+
+    public static void printError(String msg){
+        System.out.print(EscapeSequences.SET_TEXT_COLOR_RED);
+        System.out.println(msg);
+    }
+
+    public static void printRegister(String username){
+        System.out.print(EscapeSequences.SET_TEXT_COLOR_GREEN);
+        System.out.println("Account " + username + " successfully registered!");
+    }
+
+    public static void printLogin(String username){
+        System.out.print(EscapeSequences.SET_TEXT_COLOR_GREEN);
+        System.out.println("Login successful. Welcome, " + username);
+    }
+
+    public static void printArgumentError(){
+        System.out.print(EscapeSequences.SET_TEXT_COLOR_RED);
+        System.out.println("Error: Invalid arguments. Run help to see command usage.");
     }
 
 }

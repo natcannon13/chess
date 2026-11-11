@@ -4,7 +4,6 @@ import java.util.Scanner;
 
 public class Repl {
 
-    private ServerFacade serverFacade;
     private State state;
     private Scanner scanner;
     private CommandHandler handler;
@@ -16,9 +15,8 @@ public class Repl {
     }
 
     public Repl(String serverUrl){
-        this.serverFacade = new ServerFacade(serverUrl);
         scanner = new Scanner(System.in);
-        handler = new CommandHandler();
+        handler = new CommandHandler(serverUrl);
         this.state = State.SIGNED_OUT;
     }
 

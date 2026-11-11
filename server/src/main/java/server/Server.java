@@ -7,9 +7,9 @@ import io.javalin.http.Context;
 import org.jetbrains.annotations.NotNull;
 import server.models.LoginResult;
 import server.models.RegisterResult;
-import service.AlreadyTakenException;
-import service.BadArgumentException;
-import service.UnauthorizedException;
+import service.exceptions.AlreadyTakenException;
+import service.exceptions.BadArgumentException;
+import service.exceptions.UnauthorizedException;
 
 import java.util.Map;
 
