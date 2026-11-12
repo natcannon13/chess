@@ -45,7 +45,7 @@ public class CommandHandler {
             case "list":
                 return list();
             case "join":
-                return Repl.State.SIGNED_IN;
+                return join(Arrays.copyOfRange(splitCommand, 1, splitCommand.length));
             case "observe":
                 return observe(Arrays.copyOfRange(splitCommand, 1, splitCommand.length));
             case "logout":
@@ -123,22 +123,8 @@ public class CommandHandler {
             List<GameData> games = serverFacade.listGames();
             ConsoleOutput.printGameList(games);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            ConsoleOutput.printError(e.getMessage());
         }
-        return Repl.State.SIGNED_IN;
-    }
-
-    private Repl.State join(String[] args){
-        if(args.length != 2){
-            ConsoleOutput.printArgumentError();
-            return Repl.State.SIGNED_IN;
-        }
-        ChessGame.TeamColor color = resolveColor(args[1]);
-        if(color == null){
-            ConsoleOutput.printArgumentError();
-            return Repl.State.SIGNED_IN;
-        }
-        ConsoleOutput.renderChessBoard(new ChessBoard(), color);
         return Repl.State.SIGNED_IN;
     }
 
@@ -155,6 +141,27 @@ public class CommandHandler {
         ChessBoard board = new ChessBoard();
         board.resetBoard();
         ConsoleOutput.renderChessBoard(board, color);
+        return Repl.State.SIGNED_IN;
+    }
+
+    private Repl.State join(String[] args){
+        if(args.length != 2){
+            ConsoleOutput.printArgumentError();
+            return Repl.State.SIGNED_IN;
+        }
+        ChessGame.TeamColor color = resolveColor(args[1]);
+        if(color == null){
+            ConsoleOutput.printArgumentError();
+            return Repl.State.SIGNED_IN;
+        }
+        try{
+            serverFacade.join(color, Integer.parseInt(args[0]));
+            ChessBoard board = new ChessBoard();
+            board.resetBoard();
+            ConsoleOutput.renderChessBoard(board, color);
+        } catch (Exception e) {
+            ConsoleOutput.printError(e.getMessage());
+        }
         return Repl.State.SIGNED_IN;
     }
 
