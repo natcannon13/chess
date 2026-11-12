@@ -1,6 +1,9 @@
 package client;
 
 import chess.ChessBoard;
+import chess.ChessGame;
+import chess.ChessPiece;
+import chess.ChessPosition;
 import model.GameData;
 import ui.EscapeSequences;
 
@@ -35,7 +38,7 @@ public class ConsoleOutput {
                 "create <NAME>",
                 "list",
                 "join <ID> [WHITE|BLACK]",
-                "observe <ID>",
+                "observe <ID> [WHITE|BLACK]",
                 "logout",
                 "quit",
                 "help"
@@ -107,12 +110,93 @@ public class ConsoleOutput {
         }
     }
 
-    /*public static void renderChessBoard(ChessBoard board){
-        for(int i = 0; i < 8; i++){
-            for(int j = 0; j < 8; j++){
+    public static void renderChessBoard(ChessBoard board, ChessGame.TeamColor perspective){
+        System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
+        if(perspective == ChessGame.TeamColor.WHITE){
+            System.out.println("   a   b   c  d   e  f   g   h");
+            for(int i = 7; i >= 0 ; i--){
+                printRow(board, i, perspective);
+            }
+            System.out.println("   a   b   c  d   e  f   g   h");
+        }
+        else{
+            System.out.println("   h   g   f  e   d  c   b   a");
+            for(int i = 0; i < 8; i++){
+                printRow(board, i, perspective);
+            }
+            System.out.println("   h   g   f  e   d  c   b   a");
+        }
+    }
 
+    private static void printRow(ChessBoard board, int i, ChessGame.TeamColor perspective){
+        System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
+        System.out.print(i + 1 + " ");
+        if(perspective == ChessGame.TeamColor.WHITE){
+            for(int j = 0; j < 8; j++){
+                printCharacter(board, i, j);
             }
         }
-    }*/
+        else{
+            for(int j = 7; j >= 0; j--){
+                printCharacter(board, i, j);
+            }
+        }
+        System.out.print(EscapeSequences.RESET_BG_COLOR);
+        System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
+        System.out.println(" " + (i + 1));
+    }
+
+    private static void printCharacter(ChessBoard board, int i, int j){
+        System.out.print(calculateBackgroundColor(i, j));
+        ChessPiece piece = board.getPiece(new ChessPosition(i + 1, j + 1));
+        if(piece != null) {
+            System.out.print(calculatePieceColor(piece));
+            System.out.print(calculatePiece(piece));
+        }
+        else{
+            System.out.print(EscapeSequences.EMPTY);
+        }
+    }
+
+    private static String calculateBackgroundColor(int i, int j){
+        if((i + j) % 2 == 0){
+            return EscapeSequences.SET_BG_COLOR_BLACK;
+        }
+        return EscapeSequences.SET_BG_COLOR_WHITE;
+    }
+
+    private static String calculatePieceColor(ChessPiece piece){
+        ChessGame.TeamColor color = piece.getTeamColor();
+        if(color == ChessGame.TeamColor.BLACK){
+            return EscapeSequences.SET_TEXT_COLOR_BLUE;
+        }
+        else{
+            return EscapeSequences.SET_TEXT_COLOR_RED;
+        }
+    }
+
+    private static String calculatePiece(ChessPiece piece){
+        switch(piece.getPieceType()){
+            case PAWN -> {
+                return EscapeSequences.BLACK_PAWN;
+            }
+            case ROOK -> {
+                return EscapeSequences.BLACK_ROOK;
+            }
+            case KNIGHT -> {
+                return EscapeSequences.BLACK_KNIGHT;
+            }
+            case KING -> {
+                return EscapeSequences.BLACK_KING;
+            }
+            case QUEEN -> {
+                return EscapeSequences.BLACK_QUEEN;
+            }
+            case BISHOP -> {
+                return EscapeSequences.BLACK_BISHOP;
+            }
+        }
+        return null;
+    }
 
 }

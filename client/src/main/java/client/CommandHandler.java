@@ -1,9 +1,12 @@
 package client;
 
+import chess.ChessBoard;
+import chess.ChessGame;
 import model.GameData;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class CommandHandler {
 
@@ -44,7 +47,7 @@ public class CommandHandler {
             case "join":
                 return Repl.State.SIGNED_IN;
             case "observe":
-                return Repl.State.SIGNED_IN;
+                return observe(Arrays.copyOfRange(splitCommand, 1, splitCommand.length));
             case "logout":
                 return logout();
             case "quit":
@@ -123,5 +126,32 @@ public class CommandHandler {
             throw new RuntimeException(e);
         }
         return Repl.State.SIGNED_IN;
+    }
+
+    private Repl.State observe(String[] args){
+        System.out.println(Arrays.toString(args));
+        if(args.length != 2){
+            ConsoleOutput.printArgumentError();
+            return Repl.State.SIGNED_IN;
+        }
+        ChessGame.TeamColor color = resolveColor(args[1]);
+        if(color == null){
+            ConsoleOutput.printArgumentError();
+            return Repl.State.SIGNED_IN;
+        }
+        ConsoleOutput.renderChessBoard(new ChessBoard(), color);
+        return Repl.State.SIGNED_IN;
+    }
+
+    private ChessGame.TeamColor resolveColor(String color){
+        if(color.toLowerCase().equals("black")){
+            return ChessGame.TeamColor.BLACK;
+        }
+        else if(color.toLowerCase().equals("white")){
+            return ChessGame.TeamColor.WHITE;
+        }
+        else{
+            return null;
+        }
     }
 }
