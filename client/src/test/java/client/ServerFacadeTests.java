@@ -99,7 +99,7 @@ public class ServerFacadeTests {
     public void createGame() throws Exception{
         facade.register("nat", "password", "nat@example.com");
         int id = facade.createGame("game");
-        Assertions.assertEquals(4, String.valueOf(id).length());
+        Assertions.assertEquals(1, id);
     }
 
     @Test
@@ -127,12 +127,21 @@ public class ServerFacadeTests {
     @DisplayName("Join game")
     public void joinGame() throws Exception {
         facade.register("nat", "password", "nat@example.com");
-        facade.createGame("game");
-        ArrayList<GameData> games = (ArrayList<GameData>) facade.listGames();
-        int id = games.get(0).gameID();
+        int id = facade.createGame("game");
         facade.join(ChessGame.TeamColor.WHITE, id);
-        games = (ArrayList<GameData>) facade.listGames();
+        List<GameData> games = facade.listGames();
         Assertions.assertEquals("nat", games.get(0).whiteUsername());
+    }
+
+    @Test
+    @DisplayName("Join full game doesn't work")
+    public void joinFullGame() throws Exception{
+        facade.register("nat", "password", "nat@example.com");
+        int id = facade.createGame("game");
+        facade.join(ChessGame.TeamColor.WHITE, id);
+        Assertions.assertThrows(Exception.class, () -> {
+            facade.join(ChessGame.TeamColor.WHITE, id);
+        });
     }
 
 }

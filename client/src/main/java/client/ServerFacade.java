@@ -10,6 +10,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +23,7 @@ public class ServerFacade {
 
     public ServerFacade(String serverURL){
         this.serverURL = serverURL;
+        gameData = new ArrayList<>();
     }
 
     public void clear() throws Exception{ //should throw an exception
@@ -106,7 +108,8 @@ public class ServerFacade {
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         var responseBody = new Gson().fromJson(response.body(), Map.class);
         if(response.statusCode() == 200){
-            return Integer.parseInt(responseBody.get("gameID").toString());
+            listGames();
+            return gameData.size();
         }
         else{
             throw new Exception(responseBody.get("message").toString());
@@ -137,7 +140,7 @@ public class ServerFacade {
 
     public void join(ChessGame.TeamColor color, int id) throws Exception{
         String urlString = serverURL + "/game";
-        var body = Map.of("playerColor", color, "gameID", id);
+        var body = Map.of("playerColor", color, "gameID", gameData.get(id - 1).gameID());
         var json = new Gson().toJson(body);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(new URI(urlString))

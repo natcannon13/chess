@@ -152,7 +152,9 @@ public class CommandHandler {
             ConsoleOutput.printArgumentError();
             return Repl.State.SIGNED_IN;
         }
-        ConsoleOutput.renderChessBoard(new ChessBoard(), color);
+        ChessBoard board = new ChessBoard();
+        board.resetBoard();
+        ConsoleOutput.renderChessBoard(board, color);
         return Repl.State.SIGNED_IN;
     }
 

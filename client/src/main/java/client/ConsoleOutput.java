@@ -104,8 +104,9 @@ public class ConsoleOutput {
 
     public static void printGameList(List<GameData> data){
         System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
-        for(GameData gameData: data){
-            System.out.println("ID: " + gameData.gameID() + "    Game Name: " + gameData.gameName());
+        for(int i = 0; i < data.size(); i++){
+            GameData gameData = data.get(i);
+            System.out.println("ID: " + (i + 1) + "    Game Name: " + gameData.gameName());
             System.out.println("Players:    White: " + gameData.whiteUsername() + "    Black: " + gameData.blackUsername());
         }
     }
