@@ -25,6 +25,10 @@ public class ConsoleOutput {
                 " - displays this menu"
         };
 
+        printCommands(commands, descriptions);
+    }
+
+    private static void printCommands(String[] commands, String[] descriptions) {
         for(int i = 0; i < commands.length; i++) {
             System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE);
             System.out.print(commands[i]);
@@ -53,12 +57,7 @@ public class ConsoleOutput {
                 " - displays this menu"
         };
 
-        for(int i = 0; i < commands.length; i++) {
-            System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE);
-            System.out.print(commands[i]);
-            System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
-            System.out.println(descriptions[i]);
-        }
+        printCommands(commands, descriptions);
     }
 
     public static void printPrompt(Repl.State state){

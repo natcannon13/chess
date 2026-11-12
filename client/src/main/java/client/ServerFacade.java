@@ -17,7 +17,7 @@ import java.util.Map;
 public class ServerFacade {
 
     private String serverURL;
-    private static final HttpClient httpClient = HttpClient.newHttpClient();
+    private static final HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
     private String authToken;
     private List<GameData> gameData;
 
@@ -33,39 +33,30 @@ public class ServerFacade {
                 .timeout(java.time.Duration.ofMillis(5000))
                 .DELETE()
                 .build();
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     public String register(String username, String password, String email) throws Exception{
         String urlString = serverURL + "/user";
         var body = Map.of("username", username, "password", password, "email", email);
         var json = new Gson().toJson(body);
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(new URI(urlString))
-                .timeout(java.time.Duration.ofMillis(5000))
-                .POST(HttpRequest.BodyPublishers.ofString(json))
-                .build();
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        var responseBody = new Gson().fromJson(response.body(), Map.class);
-        if(response.statusCode() == 200){
-            this.authToken = responseBody.get("authToken").toString();
-            return responseBody.get("username").toString();
-        }
-        else{
-            throw new Exception(responseBody.get("message").toString());
-        }
+        return getHttpResponse(urlString, json);
     }
 
     public String login(String username, String password) throws Exception{
         String urlString = serverURL + "/session";
         var body = Map.of("username", username, "password", password);
         var json = new Gson().toJson(body);
+        return getHttpResponse(urlString, json);
+    }
+
+    private String getHttpResponse(String urlString, String json) throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(new URI(urlString))
                 .timeout(java.time.Duration.ofMillis(5000))
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .build();
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
         var responseBody = new Gson().fromJson(response.body(), Map.class);
         if(response.statusCode() == 200){
             this.authToken = responseBody.get("authToken").toString();
@@ -85,7 +76,7 @@ public class ServerFacade {
                 .header("authorization", authToken)
                 .DELETE()
                 .build();
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
         var responseBody = new Gson().fromJson(response.body(), Map.class);
         if(response.statusCode() == 200){
             this.authToken = null;
@@ -105,7 +96,7 @@ public class ServerFacade {
                 .header("authorization", authToken)
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .build();
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
         var responseBody = new Gson().fromJson(response.body(), Map.class);
         if(response.statusCode() == 200){
             listGames();
@@ -126,7 +117,7 @@ public class ServerFacade {
                 .header("authorization", authToken)
                 .GET()
                 .build();
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
         var responseBody = new Gson().fromJson(response.body(), Map.class);
         if(response.statusCode() == 200){
             Type listType = new TypeToken<List<GameData>>(){}.getType();
@@ -148,7 +139,7 @@ public class ServerFacade {
                 .header("authorization", authToken)
                 .PUT(HttpRequest.BodyPublishers.ofString(json))
                 .build();
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
         var responseBody = new Gson().fromJson(response.body(), Map.class);
         if(response.statusCode() == 200){
             //websocket!
