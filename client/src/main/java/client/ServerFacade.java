@@ -1,11 +1,15 @@
 package client;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import model.GameData;
 
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.List;
 import java.util.Map;
 
 public class ServerFacade {
@@ -101,6 +105,27 @@ public class ServerFacade {
         var responseBody = new Gson().fromJson(response.body(), Map.class);
         if(response.statusCode() == 200){
             return Integer.parseInt(responseBody.get("gameID").toString());
+        }
+        else{
+            throw new Exception(responseBody.get("message").toString());
+        }
+    }
+
+    public List<GameData> listGames() throws Exception{
+        String urlString = serverURL + "/game";
+        var body = Map.of();
+        var json = new Gson().toJson(body);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(new URI(urlString))
+                .timeout(java.time.Duration.ofMillis(5000))
+                .header("authorization", authToken)
+                .GET()
+                .build();
+        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        var responseBody = new Gson().fromJson(response.body(), Map.class);
+        if(response.statusCode() == 200){
+            Type listType = new TypeToken<List<GameData>>(){}.getType();
+            return new Gson().fromJson(responseBody.get("games").toString(), listType);
         }
         else{
             throw new Exception(responseBody.get("message").toString());

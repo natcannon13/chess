@@ -1,7 +1,11 @@
 package client;
 
+import model.GameData;
 import org.junit.jupiter.api.*;
 import server.Server;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ServerFacadeTests {
@@ -104,6 +108,18 @@ public class ServerFacadeTests {
         Assertions.assertThrows(Exception.class, () -> {
             facade.createGame("");
         });
+    }
+
+    @Test
+    @DisplayName("Game list")
+    public void listGames() throws Exception{
+        facade.register("nat", "password", "nat@example.com");
+        facade.createGame("game");
+        facade.createGame("game2");
+        ArrayList<GameData> games = (ArrayList<GameData>) facade.listGames();
+        Assertions.assertEquals(2, games.size());
+        Assertions.assertEquals("game", games.get(0).gameName());
+        Assertions.assertEquals("game2", games.get(1).gameName());
     }
 
 }

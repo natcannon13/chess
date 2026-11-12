@@ -1,7 +1,10 @@
 package client;
 
 import chess.ChessBoard;
+import model.GameData;
 import ui.EscapeSequences;
+
+import java.util.List;
 
 public class ConsoleOutput {
 
@@ -94,6 +97,14 @@ public class ConsoleOutput {
     public static void printGameCreated(int id){
         System.out.print(EscapeSequences.SET_TEXT_COLOR_GREEN);
         System.out.println("New game created with ID: " + id);
+    }
+
+    public static void printGameList(List<GameData> data){
+        System.out.print(EscapeSequences.SET_TEXT_COLOR_WHITE);
+        for(GameData gameData: data){
+            System.out.println("ID: " + gameData.gameID() + "    Game Name: " + gameData.gameName());
+            System.out.println("Players:    White: " + gameData.whiteUsername() + "    Black: " + gameData.blackUsername());
+        }
     }
 
     /*public static void renderChessBoard(ChessBoard board){

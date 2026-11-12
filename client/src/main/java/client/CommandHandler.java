@@ -1,6 +1,9 @@
 package client;
 
+import model.GameData;
+
 import java.util.Arrays;
+import java.util.List;
 
 public class CommandHandler {
 
@@ -35,9 +38,9 @@ public class CommandHandler {
                 ConsoleOutput.helpPostLogin();
                 return Repl.State.SIGNED_IN;
             case "create":
-                return create(splitCommand);
+                return create(Arrays.copyOfRange(splitCommand, 1, splitCommand.length));
             case "list":
-                return Repl.State.SIGNED_IN;
+                return list();
             case "join":
                 return Repl.State.SIGNED_IN;
             case "observe":
@@ -108,6 +111,16 @@ public class CommandHandler {
             ConsoleOutput.printGameCreated(id);
         } catch (Exception e) {
             ConsoleOutput.printError(e.getMessage());
+        }
+        return Repl.State.SIGNED_IN;
+    }
+
+    private Repl.State list(){
+        try{
+            List<GameData> games = serverFacade.listGames();
+            ConsoleOutput.printGameList(games);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
         return Repl.State.SIGNED_IN;
     }
