@@ -89,4 +89,21 @@ public class ServerFacadeTests {
         });
     }
 
+    @Test
+    @DisplayName("Create game")
+    public void createGame() throws Exception{
+        facade.register("nat", "password", "nat@example.com");
+        int id = facade.createGame("game");
+        Assertions.assertEquals(4, String.valueOf(id).length());
+    }
+
+    @Test
+    @DisplayName("Create game fails when game name invalid")
+    public void createGameFail() throws Exception{
+        facade.register("nat", "password", "nat@example.com");
+        Assertions.assertThrows(Exception.class, () -> {
+            facade.createGame("");
+        });
+    }
+
 }

@@ -87,4 +87,24 @@ public class ServerFacade {
         }
     }
 
+    public int createGame(String gameName) throws Exception{
+        String urlString = serverURL + "/game";
+        var body = Map.of("gameName", gameName);
+        var json = new Gson().toJson(body);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(new URI(urlString))
+                .timeout(java.time.Duration.ofMillis(5000))
+                .header("authorization", authToken)
+                .POST(HttpRequest.BodyPublishers.ofString(json))
+                .build();
+        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        var responseBody = new Gson().fromJson(response.body(), Map.class);
+        if(response.statusCode() == 200){
+            return Integer.parseInt(responseBody.get("gameID").toString());
+        }
+        else{
+            throw new Exception(responseBody.get("message").toString());
+        }
+    }
+
 }

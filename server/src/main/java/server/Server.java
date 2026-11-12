@@ -117,7 +117,7 @@ public class Server {
         var body = ctx.body();
         try{
             int id = HANDLER.createGame(header.get("Authorization"), body);
-            ctx.json(json.toJson(Map.of("gameID", id)));
+            ctx.json(json.toJson(Map.of("gameID", "" + id)));
             ctx.status(200);
         } catch(BadArgumentException e){
             ctx.json(json.toJson(Map.of("message", e.getMessage())));

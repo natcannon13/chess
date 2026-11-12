@@ -1,5 +1,6 @@
 package client;
 
+import chess.ChessBoard;
 import ui.EscapeSequences;
 
 public class ConsoleOutput {
@@ -89,5 +90,18 @@ public class ConsoleOutput {
         System.out.print(EscapeSequences.SET_TEXT_COLOR_GREEN);
         System.out.println("Logged out successfully.");
     }
+
+    public static void printGameCreated(int id){
+        System.out.print(EscapeSequences.SET_TEXT_COLOR_GREEN);
+        System.out.println("New game created with ID: " + id);
+    }
+
+    /*public static void renderChessBoard(ChessBoard board){
+        for(int i = 0; i < 8; i++){
+            for(int j = 0; j < 8; j++){
+
+            }
+        }
+    }*/
 
 }
