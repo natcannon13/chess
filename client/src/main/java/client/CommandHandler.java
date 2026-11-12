@@ -35,7 +35,7 @@ public class CommandHandler {
                 ConsoleOutput.helpPostLogin();
                 return Repl.State.SIGNED_IN;
             case "create":
-                return Repl.State.SIGNED_IN;
+                return create(splitCommand);
             case "list":
                 return Repl.State.SIGNED_IN;
             case "join":
@@ -96,5 +96,19 @@ public class CommandHandler {
             ConsoleOutput.printError(e.getMessage());
             return Repl.State.SIGNED_IN;
         }
+    }
+
+    private Repl.State create(String[] args){
+        if(args.length != 1){
+            ConsoleOutput.printArgumentError();
+            return Repl.State.SIGNED_IN;
+        }
+        try{
+            int id = serverFacade.createGame(args[0]);
+            ConsoleOutput.printGameCreated(id);
+        } catch (Exception e) {
+            ConsoleOutput.printError(e.getMessage());
+        }
+        return Repl.State.SIGNED_IN;
     }
 }
