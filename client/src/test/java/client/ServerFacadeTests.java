@@ -1,5 +1,6 @@
 package client;
 
+import chess.ChessGame;
 import model.GameData;
 import org.junit.jupiter.api.*;
 import server.Server;
@@ -120,6 +121,18 @@ public class ServerFacadeTests {
         Assertions.assertEquals(2, games.size());
         Assertions.assertEquals("game", games.get(0).gameName());
         Assertions.assertEquals("game2", games.get(1).gameName());
+    }
+
+    @Test
+    @DisplayName("Join game")
+    public void joinGame() throws Exception {
+        facade.register("nat", "password", "nat@example.com");
+        facade.createGame("game");
+        ArrayList<GameData> games = (ArrayList<GameData>) facade.listGames();
+        int id = games.get(0).gameID();
+        facade.join(ChessGame.TeamColor.WHITE, id);
+        games = (ArrayList<GameData>) facade.listGames();
+        Assertions.assertEquals("nat", games.get(0).whiteUsername());
     }
 
 }

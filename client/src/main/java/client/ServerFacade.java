@@ -1,5 +1,6 @@
 package client;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import model.GameData;
@@ -17,6 +18,7 @@ public class ServerFacade {
     private String serverURL;
     private static final HttpClient httpClient = HttpClient.newHttpClient();
     private String authToken;
+    private List<GameData> gameData;
 
     public ServerFacade(String serverURL){
         this.serverURL = serverURL;
@@ -125,7 +127,28 @@ public class ServerFacade {
         var responseBody = new Gson().fromJson(response.body(), Map.class);
         if(response.statusCode() == 200){
             Type listType = new TypeToken<List<GameData>>(){}.getType();
-            return new Gson().fromJson(responseBody.get("games").toString(), listType);
+            gameData = new Gson().fromJson(responseBody.get("games").toString(), listType);
+            return gameData;
+        }
+        else{
+            throw new Exception(responseBody.get("message").toString());
+        }
+    }
+
+    public void join(ChessGame.TeamColor color, int id) throws Exception{
+        String urlString = serverURL + "/game";
+        var body = Map.of("playerColor", color, "gameID", id);
+        var json = new Gson().toJson(body);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(new URI(urlString))
+                .timeout(java.time.Duration.ofMillis(5000))
+                .header("authorization", authToken)
+                .PUT(HttpRequest.BodyPublishers.ofString(json))
+                .build();
+        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        var responseBody = new Gson().fromJson(response.body(), Map.class);
+        if(response.statusCode() == 200){
+            //websocket!
         }
         else{
             throw new Exception(responseBody.get("message").toString());
