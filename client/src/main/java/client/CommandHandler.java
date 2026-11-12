@@ -128,8 +128,21 @@ public class CommandHandler {
         return Repl.State.SIGNED_IN;
     }
 
+    private Repl.State join(String[] args){
+        if(args.length != 2){
+            ConsoleOutput.printArgumentError();
+            return Repl.State.SIGNED_IN;
+        }
+        ChessGame.TeamColor color = resolveColor(args[1]);
+        if(color == null){
+            ConsoleOutput.printArgumentError();
+            return Repl.State.SIGNED_IN;
+        }
+        ConsoleOutput.renderChessBoard(new ChessBoard(), color);
+        return Repl.State.SIGNED_IN;
+    }
+
     private Repl.State observe(String[] args){
-        System.out.println(Arrays.toString(args));
         if(args.length != 2){
             ConsoleOutput.printArgumentError();
             return Repl.State.SIGNED_IN;
