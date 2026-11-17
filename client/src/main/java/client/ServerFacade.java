@@ -130,6 +130,9 @@ public class ServerFacade {
     }
 
     public void join(ChessGame.TeamColor color, int id) throws Exception{
+        if(id < 1 || id > gameData.size()){
+            throw new Exception("Error: Invalid game ID");
+        }
         String urlString = serverURL + "/game";
         var body = Map.of("playerColor", color, "gameID", gameData.get(id - 1).gameID());
         var json = new Gson().toJson(body);
@@ -146,6 +149,12 @@ public class ServerFacade {
         }
         else{
             throw new Exception(responseBody.get("message").toString());
+        }
+    }
+
+    public void observe(ChessGame.TeamColor color, int id) throws Exception{
+        if(id < 1 || id > gameData.size()){
+            throw new Exception("Error: Invalid game ID");
         }
     }
 

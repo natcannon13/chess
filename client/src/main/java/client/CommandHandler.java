@@ -134,13 +134,25 @@ public class CommandHandler {
             return Repl.State.SIGNED_IN;
         }
         ChessGame.TeamColor color = resolveColor(args[1]);
-        if(color == null){
+        if (color == null) {
             ConsoleOutput.printArgumentError();
             return Repl.State.SIGNED_IN;
         }
-        ChessBoard board = new ChessBoard();
-        board.resetBoard();
-        ConsoleOutput.renderChessBoard(board, color);
+
+        try {
+            ChessBoard board = new ChessBoard();
+            board.resetBoard();
+            serverFacade.observe(color, Integer.parseInt(args[0]));
+            ConsoleOutput.renderChessBoard(board, color);
+        } catch(Exception e){
+            String msg = e.getMessage();
+            if(msg.contains("For input string:")){
+                ConsoleOutput.printArgumentError();
+            }
+            else {
+                ConsoleOutput.printError(msg);
+            }
+        }
         return Repl.State.SIGNED_IN;
     }
 
@@ -160,7 +172,13 @@ public class CommandHandler {
             board.resetBoard();
             ConsoleOutput.renderChessBoard(board, color);
         } catch (Exception e) {
-            ConsoleOutput.printError(e.getMessage());
+            String msg = e.getMessage();
+            if(msg.contains("For input string:")){
+                ConsoleOutput.printArgumentError();
+            }
+            else {
+                ConsoleOutput.printError(msg);
+            }
         }
         return Repl.State.SIGNED_IN;
     }
