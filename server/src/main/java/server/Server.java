@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import io.javalin.*;
 import io.javalin.http.Context;
+import io.javalin.websocket.WsConfig;
 import org.jetbrains.annotations.NotNull;
 import server.models.LoginResult;
 import server.models.RegisterResult;
@@ -27,6 +28,8 @@ public class Server {
     }
 
     public Server() {
+        WebSocketHandler webSocketHandler = new WebSocketHandler(HANDLER);
+
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
         // Register your endpoints and exception handlers here.
@@ -37,6 +40,12 @@ public class Server {
         javalin.post("/game", Server::createGame);
         javalin.put("/game", Server::joinGame);
         javalin.delete("/db", Server::clearDb);
+
+        javalin.ws("/ws", ws -> {
+            ws.onConnect(webSocketHandler);
+            ws.onMessage(webSocketHandler);
+            ws.onClose(webSocketHandler);
+        });
     }
 
     private static void registerUser(@NotNull Context ctx){
