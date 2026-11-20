@@ -30,7 +30,7 @@ public class GameService {
             throw new UnauthorizedException("Error: unauthorized");
         }
         Random random = new Random();
-        int gameID = (random.nextInt(9000) + 1000);
+        int gameID = listGames(authToken).toArray().length;
         gameDAO.createGame(new GameData(gameID, null, null, gameName, null));
         return gameID;
     }

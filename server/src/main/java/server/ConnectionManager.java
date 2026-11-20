@@ -1,8 +1,7 @@
 package server;
 
 import org.eclipse.jetty.websocket.api.Session;
-
-import javax.management.Notification;
+import websocket.messages.ServerMessage;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -18,7 +17,7 @@ public class ConnectionManager {
         connections.remove(id);
     }
 
-    public void broadcast(Session excludeSession, Notification notification) throws IOException {
+    public void broadcast(Session excludeSession, ServerMessage notification) throws IOException {
         String msg = notification.toString();
         for(Session c: connections.values()){
             if(c.isOpen()){
@@ -26,6 +25,13 @@ public class ConnectionManager {
                     c.getRemote().sendString(msg);
                 }
             }
+        }
+    }
+
+    public void send(Session session, ServerMessage message) throws IOException{
+        String msg = message.toString();
+        if(session.isOpen()){
+            session.getRemote().sendString(msg);
         }
     }
 

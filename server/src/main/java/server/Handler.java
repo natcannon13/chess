@@ -26,10 +26,10 @@ public class Handler {
     private final UserDAO userDAO;
 
     public Handler() throws DataAccessException{
-        DatabaseManager.createDatabase();
-        userDAO = new SQLUserDAO();
-        gameDAO = new SQLGameDAO();
-        authDAO = new SQLAuthDAO();
+        //DatabaseManager.createDatabase();
+        userDAO = new MemoryUserDAO();
+        gameDAO = new MemoryGameDAO();
+        authDAO = new MemoryAuthDAO();
         adminService = new AdminService(authDAO, gameDAO, userDAO);
         userService = new UserService(authDAO, userDAO);
         gameService = new GameService(authDAO, gameDAO);
