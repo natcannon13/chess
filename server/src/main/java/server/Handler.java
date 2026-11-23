@@ -25,14 +25,22 @@ public class Handler {
     private final GameDAO gameDAO;
     private final UserDAO userDAO;
 
+    private final WebSocketHandler wsHandler;
+
     public Handler() throws DataAccessException{
-        //DatabaseManager.createDatabase();
-        userDAO = new MemoryUserDAO();
-        gameDAO = new MemoryGameDAO();
-        authDAO = new MemoryAuthDAO();
+        DatabaseManager.createDatabase();
+        userDAO = new SQLUserDAO();
+        gameDAO = new SQLGameDAO();
+        authDAO = new SQLAuthDAO();
         adminService = new AdminService(authDAO, gameDAO, userDAO);
         userService = new UserService(authDAO, userDAO);
         gameService = new GameService(authDAO, gameDAO);
+        wsHandler = new WebSocketHandler(this, authDAO, gameDAO);
+
+    }
+
+    public WebSocketHandler getWsHandler(){
+        return wsHandler;
     }
 
     public void clear() throws DataAccessException {

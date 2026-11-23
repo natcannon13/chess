@@ -1,13 +1,18 @@
 package server;
 
 import com.google.gson.Gson;
+import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
+import dataaccess.GameDAO;
 import io.javalin.websocket.*;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.jetbrains.annotations.NotNull;
+import service.WebSocketService;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
 import websocket.messages.GameMessage;
+import websocket.messages.Notification;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
@@ -16,9 +21,11 @@ public class WebSocketHandler implements WsConnectHandler, WsCloseHandler, WsMes
 
     private final ConnectionManager CONNECTIONS = new ConnectionManager();
     private Handler handler;
+    private WebSocketService webSocketService;
 
-    public WebSocketHandler(Handler handler){
+    public WebSocketHandler(Handler handler, AuthDAO authDAO, GameDAO gameDAO){
         this.handler = handler;
+        webSocketService = new WebSocketService(authDAO, gameDAO);
     }
 
 
@@ -45,12 +52,18 @@ public class WebSocketHandler implements WsConnectHandler, WsCloseHandler, WsMes
         }
     }
 
-
-
     public void connect(String authToken, int gameID, Session session) throws DataAccessException, IOException {
-        GameData game = handler.listGames(authToken).get(gameID);
-        CONNECTIONS.send(session, new GameMessage(game));
-        //NOTIFICATION to other clients
+        CONNECTIONS.add(authToken, session);
+        try{
+            GameMessage game = webSocketService.loadGame(authToken, gameID);
+            Notification notification = webSocketService.joinNotification(authToken, gameID);
+            CONNECTIONS.send(session, game);
+            CONNECTIONS.broadcast(session, notification);
+        }
+        catch (Exception e){
+            ErrorMessage message = new ErrorMessage(e.getMessage());
+            CONNECTIONS.send(session, message);
+        }
     }
 
 }

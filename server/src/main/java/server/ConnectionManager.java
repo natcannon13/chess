@@ -7,14 +7,14 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ConnectionManager {
 
-    public final ConcurrentHashMap<Integer, Session> connections = new ConcurrentHashMap<>();
+    public final ConcurrentHashMap<String, Session> connections = new ConcurrentHashMap<>();
 
-    public void add(int id, Session session){
-        connections.put(id, session);
+    public void add(String auth, Session session){
+        connections.put(auth, session);
     }
 
-    public void remove(int id){
-        connections.remove(id);
+    public void remove(String auth){
+        connections.remove(auth);
     }
 
     public void broadcast(Session excludeSession, ServerMessage notification) throws IOException {

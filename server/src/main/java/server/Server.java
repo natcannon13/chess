@@ -28,7 +28,7 @@ public class Server {
     }
 
     public Server() {
-        WebSocketHandler webSocketHandler = new WebSocketHandler(HANDLER);
+        WebSocketHandler webSocketHandler = HANDLER.getWsHandler();
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
