@@ -22,6 +22,30 @@ public class WebSocketService {
         this.gameDAO = gameDAO;
     }
 
+    public Notification leaveGame(String authToken, int gameID) throws DataAccessException, UnauthorizedException, BadArgumentException{
+        AuthData authData = authDAO.getAuth(authToken);
+        if(authData == null){
+            throw new UnauthorizedException("Error: unauthorized");
+        }
+        String username = authData.username();
+        GameData game = gameDAO.getGame(gameID);
+        if(game == null){
+            throw new BadArgumentException("Error: bad request");
+        }
+        GameData newInfo;
+        if(Objects.equals(game.whiteUsername(), username)){
+            newInfo = new GameData(gameID, null, game.blackUsername(), game.gameName(), game.game());
+        }
+        else if(Objects.equals(game.blackUsername(), username)){
+            newInfo = new GameData(gameID, game.whiteUsername(), null, game.gameName(), game.game());
+        }
+        else{
+            return new Notification("Observer " + username + " has left the game.");
+        }
+        gameDAO.updateGame(newInfo);
+        return new Notification("Player " + username + "has left the game.");
+    }
+
     public Notification joinNotification(String authToken, int gameID) throws DataAccessException, BadArgumentException {
         AuthData authData = authDAO.getAuth(authToken);
         if(authData == null){

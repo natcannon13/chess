@@ -47,21 +47,35 @@ public class WebSocketHandler implements WsConnectHandler, WsCloseHandler, WsMes
         switch(command.getCommandType()){
             case CONNECT -> {connect(command.getAuthToken(), command.getGameID(), ctx.session);}
             case MAKE_MOVE -> {break;}
-            case LEAVE -> {break;}
+            case LEAVE -> {leave(command.getAuthToken(), ctx.session);}
             case RESIGN -> {break;}
         }
     }
 
     public void connect(String authToken, int gameID, Session session) throws DataAccessException, IOException {
-        CONNECTIONS.add(authToken, session);
+        CONNECTIONS.add(authToken, gameID, session);
         try{
             GameMessage game = webSocketService.loadGame(authToken, gameID);
             Notification notification = webSocketService.joinNotification(authToken, gameID);
             CONNECTIONS.send(session, game);
-            CONNECTIONS.broadcast(session, notification);
+            CONNECTIONS.broadcast(session, gameID, notification);
         }
         catch (Exception e){
             ErrorMessage message = new ErrorMessage(e.getMessage());
+            CONNECTIONS.send(session, message);
+        }
+    }
+
+    public void leave(String authToken, Session session) throws IOException {
+        int id = CONNECTIONS.remove(authToken);
+        try{
+            Notification notification = webSocketService.leaveGame(authToken, id);
+            CONNECTIONS.broadcast(session, id, notification);
+            session.close();
+        }
+        catch (Exception e){
+            ErrorMessage message = new ErrorMessage(e.getMessage());
+            CONNECTIONS.add(authToken, id, session);
             CONNECTIONS.send(session, message);
         }
     }
