@@ -13,6 +13,7 @@ import service.exceptions.UnauthorizedException;
 import websocket.messages.GameMessage;
 import websocket.messages.Notification;
 
+import javax.xml.crypto.Data;
 import java.util.Objects;
 
 public class WebSocketService {
@@ -131,6 +132,36 @@ public class WebSocketService {
         else{
             return null;
         }
+    }
+
+    public Notification resign(String authToken, int gameID) throws BadArgumentException, DataAccessException, UnauthorizedException {
+        AuthData authData = authDAO.getAuth(authToken);
+        if(authData == null){
+            throw new UnauthorizedException("Error: unauthorized");
+        }
+        String username = authData.username();
+        GameData game = gameDAO.getGame(gameID);
+        if(game == null){
+            throw new BadArgumentException("Error: bad request");
+        }
+        GameData newInfo;
+        ChessGame chessGame = game.game();
+        String opponent = "";
+        if(Objects.equals(game.whiteUsername(), username)){
+            chessGame.endGame();
+            newInfo = new GameData(gameID, username, game.blackUsername(), game.gameName(), chessGame);
+            opponent = game.blackUsername();
+        }
+        else if(Objects.equals(game.blackUsername(), username)){
+            chessGame.endGame();
+            newInfo = new GameData(gameID, game.whiteUsername(), null, game.gameName(), chessGame);
+            opponent = game.whiteUsername();
+        }
+        else{
+            throw new UnauthorizedException("Error: observers cannot resign");
+        }
+        gameDAO.updateGame(newInfo);
+        return new Notification("Player " + username + "has resigned the game. " + opponent + " wins!");
     }
 
     public ChessGame.TeamColor getPlayerColor(int gameID, String username) throws BadArgumentException, DataAccessException {

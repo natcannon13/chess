@@ -51,7 +51,7 @@ public class WebSocketHandler implements WsConnectHandler, WsCloseHandler, WsMes
                 makeMove(moveCommand.getAuthToken(), moveCommand.getGameID(), ctx.session, moveCommand.move());
             }
             case LEAVE -> {leave(command.getAuthToken(), ctx.session);}
-            case RESIGN -> {break;}
+            case RESIGN -> {resign(command.getAuthToken(), command.getGameID(), ctx.session);}
         }
     }
 
@@ -95,6 +95,17 @@ public class WebSocketHandler implements WsConnectHandler, WsCloseHandler, WsMes
             }
 
         } catch (Exception e) {
+            ErrorMessage message = new ErrorMessage(e.getMessage());
+            connections.send(session, message);
+        }
+    }
+
+    public void resign(String authToken, int id, Session session) throws IOException{
+        try{
+            Notification notification = webSocketService.resign(authToken, id);
+            connections.broadcast(null, id, notification);
+        }
+        catch (Exception e){
             ErrorMessage message = new ErrorMessage(e.getMessage());
             connections.send(session, message);
         }
