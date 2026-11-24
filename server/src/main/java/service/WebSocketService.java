@@ -113,6 +113,12 @@ public class WebSocketService {
             throw new BadArgumentException("Error: bad request");
         }
         ChessGame.TeamColor color = getPlayerColor(gameID, authData.username());
+        if(color == ChessGame.TeamColor.BLACK){
+            color = ChessGame.TeamColor.WHITE;
+        }
+        else{
+            color = ChessGame.TeamColor.BLACK;
+        }
         if(game.game().isInCheckmate(color)){
             return " It resulted in checkmate!";
         }

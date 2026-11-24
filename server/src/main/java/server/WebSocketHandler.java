@@ -86,14 +86,12 @@ public class WebSocketHandler implements WsConnectHandler, WsCloseHandler, WsMes
     public void makeMove(String authToken, int id, Session session, ChessMove move) throws IOException {
         try{
             GameMessage message = webSocketService.makeMove(authToken, id, move);
+            connections.broadcast(null, id, message);
             String notificationBase = "Move made: " + move.toString();
             String notificationString = webSocketService.getMoveNotificationString(authToken, id);
-            connections.broadcast(null, id, message);
-            if(notificationString == null) {
-                connections.broadcast(session, id, new Notification(notificationBase));
-            }
-            else{
-                connections.broadcast(null, id, new Notification(notificationBase + " " + notificationString));
+            connections.broadcast(session, id, new Notification(notificationBase));
+            if(notificationString != null){
+                connections.broadcast(null, id, new Notification(notificationString));
             }
 
         } catch (Exception e) {
