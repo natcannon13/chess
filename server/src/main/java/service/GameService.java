@@ -30,8 +30,7 @@ public class GameService {
         if(authDAO.getAuth(authToken) == null){
             throw new UnauthorizedException("Error: unauthorized");
         }
-        Random random = new Random();
-        int gameID = listGames(authToken).toArray().length;
+        int gameID = listGames(authToken).toArray().length + 1;
         gameDAO.createGame(new GameData(gameID, null, null, gameName, new ChessGame()));
         return gameID;
     }

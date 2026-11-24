@@ -43,7 +43,7 @@ public class GameServiceTest {
     @DisplayName("Create Game Succeeds")
     public void createGameSuccess() throws BadArgumentException, DataAccessException {
         int gameID = gameService.createGame("1", "game");
-        Assertions.assertEquals(4, String.valueOf(gameID).length());
+        Assertions.assertEquals(1, gameID);
     }
 
     @Test

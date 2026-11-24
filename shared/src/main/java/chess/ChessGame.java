@@ -14,12 +14,14 @@ public class ChessGame {
     private ChessBoard board;
     private TeamColor turn;
     private ChessRulesEngine rules;
+    private boolean over;
 
     public ChessGame() {
         board = new ChessBoard();
         board.resetBoard();
         rules = new ChessRulesEngine();
         turn = TeamColor.WHITE;
+        over = false;
     }
 
     /**
@@ -77,6 +79,9 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        if(over){
+            throw new InvalidMoveException("Error: This game is over!");
+        }
         Collection<ChessMove> moves = validMoves(move.getStartPosition());
         if(moves == null || !moves.contains(move)) {
             throw new InvalidMoveException("Error: Invalid Move");
@@ -90,12 +95,19 @@ public class ChessGame {
                 throw new InvalidMoveException("Error: Move results in Check.");
             }
             board.movePiece(move);
-            changeTurn();
             ChessPiece.PieceType promotion = move.getPromotionPiece();
             if(promotion != null){
                 board.promotePiece(move.getEndPosition(), promotion);
             }
+            changeTurn();
+            if(isInStalemate(turn) || isInCheckmate(turn)){
+                over = true;
+            }
         }
+    }
+
+    public void endGame(){
+        over = true;
     }
 
     public void changeTurn(){
