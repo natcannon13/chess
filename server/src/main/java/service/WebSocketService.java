@@ -81,7 +81,7 @@ public class WebSocketService {
         return new GameMessage(game);
     }
 
-    public GameMessage makeMove(String authToken, int gameID, ChessMove move) throws BadArgumentException, DataAccessException, InvalidMoveException {
+    public GameMessage makeMove(String authToken, int gameID, ChessMove move) throws BadArgumentException, DataAccessException, InvalidMoveException, UnauthorizedException {
         AuthData authData = authDAO.getAuth(authToken);
         if(authData == null){
             throw new UnauthorizedException("Error: unauthorized");
@@ -90,10 +90,58 @@ public class WebSocketService {
         if(game == null){
             throw new BadArgumentException("Error: bad request");
         }
+        ChessGame.TeamColor color = getPlayerColor(gameID, authData.username());
+        if(color == null){
+            throw new UnauthorizedException("Error: observers cannot make moves");
+        }
         ChessGame chessGame = game.game();
+        if(color != chessGame.getTeamTurn()){
+            throw new UnauthorizedException("Error: out of turn");
+        }
         chessGame.makeMove(move);
         gameDAO.updateGame(new GameData(gameID, game.whiteUsername(), game.blackUsername(), game.gameName(), chessGame));
         return new GameMessage(game);
+    }
+
+    public String getMoveNotificationString(String authToken, int gameID) throws BadArgumentException, DataAccessException, UnauthorizedException {
+        AuthData authData = authDAO.getAuth(authToken);
+        if(authData == null){
+            throw new UnauthorizedException("Error: unauthorized");
+        }
+        GameData game = gameDAO.getGame(gameID);
+        if(game == null){
+            throw new BadArgumentException("Error: bad request");
+        }
+        ChessGame.TeamColor color = getPlayerColor(gameID, authData.username());
+        if(game.game().isInCheckmate(color)){
+            return " It resulted in checkmate!";
+        }
+        else if(game.game().isInCheck(color)){
+            return " It resulted in check.";
+        }
+        else if(game.game().isInStalemate(color)){
+            return " It resulted in stalemate.";
+        }
+        else{
+            return null;
+        }
+    }
+
+    public ChessGame.TeamColor getPlayerColor(int gameID, String username) throws BadArgumentException, DataAccessException {
+        GameData game = gameDAO.getGame(gameID);
+        if(game == null){
+            throw new BadArgumentException("Error: bad request");
+        }
+        if(game.blackUsername().equals(username)){
+            return ChessGame.TeamColor.BLACK;
+        }
+        else if(game.whiteUsername().equals(username)){
+            return ChessGame.TeamColor.WHITE;
+        }
+        else{
+            return null;
+        }
+
     }
 
 

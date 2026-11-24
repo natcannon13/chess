@@ -6,7 +6,6 @@ import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import io.javalin.websocket.*;
-import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.jetbrains.annotations.NotNull;
 import service.WebSocketService;
@@ -15,13 +14,12 @@ import websocket.commands.UserMoveCommand;
 import websocket.messages.ErrorMessage;
 import websocket.messages.GameMessage;
 import websocket.messages.Notification;
-import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 
 public class WebSocketHandler implements WsConnectHandler, WsCloseHandler, WsMessageHandler {
 
-    private final ConnectionManager CONNECTIONS = new ConnectionManager();
+    private final ConnectionManager connections = new ConnectionManager();
     private Handler handler;
     private WebSocketService webSocketService;
 
@@ -58,43 +56,49 @@ public class WebSocketHandler implements WsConnectHandler, WsCloseHandler, WsMes
     }
 
     public void connect(String authToken, int gameID, Session session) throws DataAccessException, IOException {
-        CONNECTIONS.add(authToken, gameID, session);
+        connections.add(authToken, gameID, session);
         try{
             GameMessage game = webSocketService.loadGame(authToken, gameID);
             Notification notification = webSocketService.joinNotification(authToken, gameID);
-            CONNECTIONS.send(session, game);
-            CONNECTIONS.broadcast(session, gameID, notification);
+            connections.send(session, game);
+            connections.broadcast(session, gameID, notification);
         }
         catch (Exception e){
             ErrorMessage message = new ErrorMessage(e.getMessage());
-            CONNECTIONS.send(session, message);
+            connections.send(session, message);
         }
     }
 
     public void leave(String authToken, Session session) throws IOException {
-        int id = CONNECTIONS.remove(authToken);
+        int id = connections.remove(authToken);
         try{
             Notification notification = webSocketService.leaveGame(authToken, id);
-            CONNECTIONS.broadcast(session, id, notification);
+            connections.broadcast(session, id, notification);
             session.close();
         }
         catch (Exception e){
             ErrorMessage message = new ErrorMessage(e.getMessage());
-            CONNECTIONS.add(authToken, id, session);
-            CONNECTIONS.send(session, message);
+            connections.add(authToken, id, session);
+            connections.send(session, message);
         }
     }
 
     public void makeMove(String authToken, int id, Session session, ChessMove move) throws IOException {
         try{
             GameMessage message = webSocketService.makeMove(authToken, id, move);
-            Notification notification = new Notification(move.toString());
-            CONNECTIONS.broadcast(null, id, message);
-            CONNECTIONS.broadcast(session, id, notification);
+            String notificationBase = "Move made: " + move.toString();
+            String notificationString = webSocketService.getMoveNotificationString(authToken, id);
+            connections.broadcast(null, id, message);
+            if(notificationString == null) {
+                connections.broadcast(session, id, new Notification(notificationBase));
+            }
+            else{
+                connections.broadcast(null, id, new Notification(notificationBase + " " + notificationString));
+            }
 
         } catch (Exception e) {
             ErrorMessage message = new ErrorMessage(e.getMessage());
-            CONNECTIONS.send(session, message);
+            connections.send(session, message);
         }
     }
 
