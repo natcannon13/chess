@@ -146,6 +146,9 @@ public class WebSocketService {
         }
         GameData newInfo;
         ChessGame chessGame = game.game();
+        if(chessGame.isOver()){
+            throw new BadArgumentException("Error: This game is already over!");
+        }
         String opponent = "";
         if(Objects.equals(game.whiteUsername(), username)){
             chessGame.endGame();

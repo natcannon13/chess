@@ -110,6 +110,10 @@ public class ChessGame {
         over = true;
     }
 
+    public boolean isOver(){
+        return over;
+    }
+
     public void changeTurn(){
         if(turn == TeamColor.BLACK){
             turn = TeamColor.WHITE;
