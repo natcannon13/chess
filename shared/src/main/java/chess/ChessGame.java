@@ -79,15 +79,15 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         Collection<ChessMove> moves = validMoves(move.getStartPosition());
         if(moves == null || !moves.contains(move)) {
-            throw new InvalidMoveException("Invalid Move");
+            throw new InvalidMoveException("Error: Invalid Move");
         }
         else {
             TeamColor color = board.getColor(move.getStartPosition());
             if(color != turn){
-                throw new InvalidMoveException("Out of Turn");
+                throw new InvalidMoveException("Error: Out of Turn");
             }
             if(!rules.canMakeMove(color, move, board)){
-                throw new InvalidMoveException("Move results in Check.");
+                throw new InvalidMoveException("Error: Move results in Check.");
             }
             board.movePiece(move);
             changeTurn();

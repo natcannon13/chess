@@ -1,5 +1,8 @@
 package service;
 
+import chess.ChessGame;
+import chess.ChessMove;
+import chess.InvalidMoveException;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
@@ -75,6 +78,21 @@ public class WebSocketService {
         if(game == null){
             throw new BadArgumentException("Error: bad request");
         }
+        return new GameMessage(game);
+    }
+
+    public GameMessage makeMove(String authToken, int gameID, ChessMove move) throws BadArgumentException, DataAccessException, InvalidMoveException {
+        AuthData authData = authDAO.getAuth(authToken);
+        if(authData == null){
+            throw new UnauthorizedException("Error: unauthorized");
+        }
+        GameData game = gameDAO.getGame(gameID);
+        if(game == null){
+            throw new BadArgumentException("Error: bad request");
+        }
+        ChessGame chessGame = game.game();
+        chessGame.makeMove(move);
+        gameDAO.updateGame(new GameData(gameID, game.whiteUsername(), game.blackUsername(), game.gameName(), chessGame));
         return new GameMessage(game);
     }
 

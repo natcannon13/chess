@@ -1,5 +1,6 @@
 package service;
 
+import chess.ChessGame;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
@@ -31,7 +32,7 @@ public class GameService {
         }
         Random random = new Random();
         int gameID = listGames(authToken).toArray().length;
-        gameDAO.createGame(new GameData(gameID, null, null, gameName, null));
+        gameDAO.createGame(new GameData(gameID, null, null, gameName, new ChessGame()));
         return gameID;
     }
 

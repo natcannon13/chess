@@ -1,5 +1,6 @@
 package server;
 
+import chess.ChessMove;
 import com.google.gson.Gson;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
@@ -10,6 +11,7 @@ import org.eclipse.jetty.websocket.api.Session;
 import org.jetbrains.annotations.NotNull;
 import service.WebSocketService;
 import websocket.commands.UserGameCommand;
+import websocket.commands.UserMoveCommand;
 import websocket.messages.ErrorMessage;
 import websocket.messages.GameMessage;
 import websocket.messages.Notification;
@@ -46,7 +48,10 @@ public class WebSocketHandler implements WsConnectHandler, WsCloseHandler, WsMes
         UserGameCommand command = json.fromJson(ctx.message(), UserGameCommand.class);
         switch(command.getCommandType()){
             case CONNECT -> {connect(command.getAuthToken(), command.getGameID(), ctx.session);}
-            case MAKE_MOVE -> {break;}
+            case MAKE_MOVE -> {
+                UserMoveCommand moveCommand = json.fromJson(ctx.message(), UserMoveCommand.class);
+                makeMove(moveCommand.getAuthToken(), moveCommand.getGameID(), ctx.session, moveCommand.move());
+            }
             case LEAVE -> {leave(command.getAuthToken(), ctx.session);}
             case RESIGN -> {break;}
         }
@@ -76,6 +81,19 @@ public class WebSocketHandler implements WsConnectHandler, WsCloseHandler, WsMes
         catch (Exception e){
             ErrorMessage message = new ErrorMessage(e.getMessage());
             CONNECTIONS.add(authToken, id, session);
+            CONNECTIONS.send(session, message);
+        }
+    }
+
+    public void makeMove(String authToken, int id, Session session, ChessMove move) throws IOException {
+        try{
+            GameMessage message = webSocketService.makeMove(authToken, id, move);
+            Notification notification = new Notification(move.toString());
+            CONNECTIONS.broadcast(null, id, message);
+            CONNECTIONS.broadcast(session, id, notification);
+
+        } catch (Exception e) {
+            ErrorMessage message = new ErrorMessage(e.getMessage());
             CONNECTIONS.send(session, message);
         }
     }
